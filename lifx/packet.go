@@ -1,3 +1,11 @@
+//
+//  packet.go
+//  GitHubLight
+//
+//  Created by Karl Kraft on 12/29/2022
+//  Copyright 2022-2023 Karl Kraft. All rights reserved.
+//
+
 package lifx
 
 import (
