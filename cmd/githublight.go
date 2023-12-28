@@ -3,16 +3,24 @@ package main
 import (
 	"context"
 	"github.com/google/go-github/v57/github"
+	"karlkraft.com/GitHubLight/lifx"
 	"log"
 	"os"
 )
 
 func main() {
-	token := os.Getenv("GITHUBLIGHT_ACCESS_TOKEN")
-	if len(token) == 0 {
+	githubAccessToken := os.Getenv("GITHUBLIGHT_ACCESS_TOKEN")
+	if len(githubAccessToken) == 0 {
 		log.Fatalf("You need to define GITHUBLIGHT_ACCESS_TOKEN.")
 	}
-	client := github.NewClient(nil).WithAuthToken(token)
+	lifxIP := os.Getenv("LIFX_IP")
+	if len(lifxIP) == 0 {
+		log.Fatalf("You need to define LIFX_IP.")
+	}
+	packet := lifx.NewSetColorLIFXPacket(0.333333, 1.0, 1.0, 3500, 0)
+	packet.Dump()
+
+	client := github.NewClient(nil).WithAuthToken(githubAccessToken)
 	options := github.SearchOptions{
 		Sort:      "committer-date",
 		Order:     "desc",
