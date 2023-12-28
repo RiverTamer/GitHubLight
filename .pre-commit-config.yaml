@@ -25,10 +25,10 @@ repos:
    hooks:
     - id: forbid-crlf
     - id: forbid-tabs
-      types_or: [objective-c, objective-c++, swift, swiftdeps, java]
+      types_or: [objective-c, objective-c++, swift, swiftdeps, java, c++]
 
  - repo: https://github.com/KarlKraft/header_check
-   rev: v1.6.0
+   rev: v1.7.0
    hooks:
     - id: header_check
       args: [--autodate, --license, arr]
