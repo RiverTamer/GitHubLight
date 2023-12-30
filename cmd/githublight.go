@@ -9,13 +9,28 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/google/go-github/v57/github"
 	"karlkraft.com/GitHubLight"
 	"log"
+	"math"
 	"net"
 	"os"
 	"time"
 )
+
+var palette = [9][3]uint8{
+	{0x00, 0x40, 0x00},
+	{0x00, 0x40, 0x05},
+	{0x00, 0x40, 0x10},
+	{0x00, 0x20, 0x10},
+	{0x00, 0x00, 0x20},
+	{0x20, 0x05, 0x05},
+	{0x30, 0x05, 0x05},
+	{0x40, 0x00, 0x00},
+	{0x0, 0x0, 0x0},
+}
 
 func main() {
 	settings := readSettings()
@@ -29,34 +44,66 @@ func main() {
 
 	lightTest(conn)
 
-	//client := github.NewClient(nil).WithAuthToken(githubAccessToken)
-	//options := github.SearchOptions{
-	//	Sort:      "committer-date",
-	//	Order:     "desc",
-	//	TextMatch: false,
-	//	ListOptions: github.ListOptions{
-	//		Page:    1,
-	//		PerPage: 30,
-	//	},
-	//}
-	//commits, _, err := client.Search.Commits(context.Background(), "author:KarlKraft", &options)
-	//if err != nil {
-	//	log.Fatalf("Could not fetch commits. %v", err)
-	//	return
-	//}
-	//log.Printf("Total commit count is %d", *commits.Total)
+	client := github.NewClient(nil).WithAuthToken(settings.GithubToken)
+
+	// set REVIEW light
+	lightPattern := lightCommandForReview(settings, client)
+	lightPattern.Send(conn)
+	// get merge value
+	// check for pulls
+	// check for commit strength
+
+}
+
+func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client) GitHubLight.LightCommand {
+	options := github.SearchOptions{
+		Sort:      "created",
+		Order:     "asc",
+		TextMatch: false,
+		ListOptions: github.ListOptions{
+			Page:    1,
+			PerPage: 30,
+		},
+	}
+	issues, _, err := client.Search.Issues(context.Background(), "is:open is:pr review-requested:"+settings.Username, &options)
+	if err != nil {
+		log.Fatalf("Could not fetch issues (%v)", err)
+	}
+	if len(issues.Issues) > 0 {
+		oldestIssue := issues.Issues[0]
+		ts := oldestIssue.CreatedAt
+		now := time.Now()
+		age := math.Abs(ts.Sub(now).Hours())
+		log.Printf("Oldest PR is %0.0f hours old.", age)
+		idx := int(age)
+		if idx > 7 {
+			idx = 7
+		}
+		tone := palette[idx]
+		return GitHubLight.LightCommand{
+			Start:  0,
+			Length: 3,
+			Red:    tone[0],
+			Green:  tone[1],
+			Blue:   tone[2],
+		}
+	} else {
+		log.Printf("No PRs need review.")
+		return GitHubLight.LightCommand{
+			Start:  0,
+			Length: 3,
+			Red:    0x00,
+			Green:  0x00,
+			Blue:   0x00,
+		}
+	}
 
 }
 
 func lightTest(conn net.Conn) {
 
-	colors := [2][3]uint8{
-		{0x40, 0x40, 0x40},
-		{0x0, 0x0, 0x0},
-	}
-
-	for x := 0; x < 2; x++ {
-		set := colors[x]
+	for x := 8; x < 9; x++ {
+		set := palette[x]
 		lightPattern := GitHubLight.LightCommand{
 			Start:  0,
 			Length: 12,
