@@ -14,7 +14,8 @@ import (
 )
 
 type Settings struct {
-	GithubToken string `tom:"GITHUB_ACCESS_TOKEN"`
+	GithubToken string `toml:"GITHUB_ACCESS_TOKEN"`
+	Username    string
 	BoxIP       string
 	BoxPort     uint16
 }
