@@ -152,5 +152,8 @@ void loop() {
     leds[idx] = CRGB(packetBuffer.red, packetBuffer.green, packetBuffer.blue);
   }
   FastLED.show();
-  Serial.println("Updated...");
+  // Serial.println("Updated...");
+  // char buffer[128];
+  // sprintf(buffer,"s=%d, l=%d, r=%02x, g=%02x, b=%02x",packetBuffer.lightStart, packetBuffer.lightRange,packetBuffer.red,packetBuffer.green,packetBuffer.blue);
+  // Serial.println(buffer);
 }
