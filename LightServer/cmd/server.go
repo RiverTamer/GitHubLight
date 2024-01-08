@@ -20,16 +20,28 @@ type apiService struct {
 	mux sync.Mutex
 }
 
-func (s *apiService) ReportPost(ctx context.Context, req *ReportPostReq) (ReportPostOK, error) {
+func (s *apiService) ReportPost(ctx context.Context, req *api.ReportPostReq) (api.ReportPostOK, error) {
 	s.mux.Lock()
-	log.Printf("ReportPost()")
+	log.Printf("ReportPost() %s %s %s %d", req.Owner, req.Repository, req.Section, req.Age)
 	defer s.mux.Unlock()
+	return api.ReportPostOK{
+		Data: nil,
+	}, nil
 }
 
-func (s *apiService) NewError(ctx context.Context, err error) *ErrorStatusCode {
+func (s *apiService) NewError(ctx context.Context, err error) *api.ErrorStatusCode {
 	s.mux.Lock()
 	log.Printf("NewError()")
 	defer s.mux.Unlock()
+	return &api.ErrorStatusCode{
+		StatusCode: 404,
+		Response: api.Error{
+			Summary: api.OptString{
+				Value: "Generic error",
+				Set:   true,
+			},
+		},
+	}
 
 }
 
