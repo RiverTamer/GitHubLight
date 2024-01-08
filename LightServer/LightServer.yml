@@ -13,7 +13,34 @@ servers:
     description: Production Server
 
 components:
+
   schemas:
+    ReportTuple:
+      type: object
+      properties:
+        owner:
+          type: string
+        repository:
+          type: string
+        section:
+          type: string
+          enum: [review, merge, pull]
+        age:
+          type: integer
+
+    Reports:
+      type: array
+      items:
+        anyOf:
+          - $ref: "#/components/schemas/ReportTuple"
+
+    Result:
+      type: object
+      properties:
+        summary:
+          type: string
+
+
     Error:
       type: object
       properties:
@@ -29,21 +56,16 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                owner:
-                  type: string
-                repository:
-                  type: string
-                section:
-                  type: string
-                age:
-                  type: integer
+              $ref: "#/components/schemas/Reports"
+
       responses:
         '200':
           description: Accepted
           content:
-            text/plain:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
         default:
           description: Accepted
           content:
