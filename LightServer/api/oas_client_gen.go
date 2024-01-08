@@ -26,7 +26,7 @@ type Invoker interface {
 	// Reports the current status for monitored tuple.
 	//
 	// POST /report
-	ReportPost(ctx context.Context, request *ReportPostReq) (ReportPostOK, error)
+	ReportPost(ctx context.Context, request Reports) (*Result, error)
 }
 
 // Client implements OAS client.
@@ -86,12 +86,12 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 // Reports the current status for monitored tuple.
 //
 // POST /report
-func (c *Client) ReportPost(ctx context.Context, request *ReportPostReq) (ReportPostOK, error) {
+func (c *Client) ReportPost(ctx context.Context, request Reports) (*Result, error) {
 	res, err := c.sendReportPost(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendReportPost(ctx context.Context, request *ReportPostReq) (res ReportPostOK, err error) {
+func (c *Client) sendReportPost(ctx context.Context, request Reports) (res *Result, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/report"),

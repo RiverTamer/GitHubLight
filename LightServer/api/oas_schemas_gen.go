@@ -4,7 +4,8 @@ package api
 
 import (
 	"fmt"
-	"io"
+
+	"github.com/go-faster/errors"
 )
 
 func (s *ErrorStatusCode) Error() string {
@@ -98,6 +99,52 @@ func (o OptInt) Or(d int) int {
 	return d
 }
 
+// NewOptReportTupleSection returns new OptReportTupleSection with value set to v.
+func NewOptReportTupleSection(v ReportTupleSection) OptReportTupleSection {
+	return OptReportTupleSection{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptReportTupleSection is optional ReportTupleSection.
+type OptReportTupleSection struct {
+	Value ReportTupleSection
+	Set   bool
+}
+
+// IsSet returns true if OptReportTupleSection was set.
+func (o OptReportTupleSection) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptReportTupleSection) Reset() {
+	var v ReportTupleSection
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptReportTupleSection) SetTo(v ReportTupleSection) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptReportTupleSection) Get() (v ReportTupleSection, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptReportTupleSection) Or(d ReportTupleSection) ReportTupleSection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -144,63 +191,153 @@ func (o OptString) Or(d string) string {
 	return d
 }
 
-type ReportPostOK struct {
-	Data io.Reader
-}
-
-// Read reads data from the Data reader.
-//
-// Kept to satisfy the io.Reader interface.
-func (s ReportPostOK) Read(p []byte) (n int, err error) {
-	if s.Data == nil {
-		return 0, io.EOF
-	}
-	return s.Data.Read(p)
-}
-
-type ReportPostReq struct {
-	Owner      OptString `json:"owner"`
-	Repository OptString `json:"repository"`
-	Section    OptString `json:"section"`
-	Age        OptInt    `json:"age"`
+// Ref: #/components/schemas/ReportTuple
+type ReportTuple struct {
+	Owner      OptString             `json:"owner"`
+	Repository OptString             `json:"repository"`
+	Section    OptReportTupleSection `json:"section"`
+	Age        OptInt                `json:"age"`
 }
 
 // GetOwner returns the value of Owner.
-func (s *ReportPostReq) GetOwner() OptString {
+func (s *ReportTuple) GetOwner() OptString {
 	return s.Owner
 }
 
 // GetRepository returns the value of Repository.
-func (s *ReportPostReq) GetRepository() OptString {
+func (s *ReportTuple) GetRepository() OptString {
 	return s.Repository
 }
 
 // GetSection returns the value of Section.
-func (s *ReportPostReq) GetSection() OptString {
+func (s *ReportTuple) GetSection() OptReportTupleSection {
 	return s.Section
 }
 
 // GetAge returns the value of Age.
-func (s *ReportPostReq) GetAge() OptInt {
+func (s *ReportTuple) GetAge() OptInt {
 	return s.Age
 }
 
 // SetOwner sets the value of Owner.
-func (s *ReportPostReq) SetOwner(val OptString) {
+func (s *ReportTuple) SetOwner(val OptString) {
 	s.Owner = val
 }
 
 // SetRepository sets the value of Repository.
-func (s *ReportPostReq) SetRepository(val OptString) {
+func (s *ReportTuple) SetRepository(val OptString) {
 	s.Repository = val
 }
 
 // SetSection sets the value of Section.
-func (s *ReportPostReq) SetSection(val OptString) {
+func (s *ReportTuple) SetSection(val OptReportTupleSection) {
 	s.Section = val
 }
 
 // SetAge sets the value of Age.
-func (s *ReportPostReq) SetAge(val OptInt) {
+func (s *ReportTuple) SetAge(val OptInt) {
 	s.Age = val
+}
+
+type ReportTupleSection string
+
+const (
+	ReportTupleSectionReview ReportTupleSection = "review"
+	ReportTupleSectionMerge  ReportTupleSection = "merge"
+	ReportTupleSectionPull   ReportTupleSection = "pull"
+)
+
+// AllValues returns all ReportTupleSection values.
+func (ReportTupleSection) AllValues() []ReportTupleSection {
+	return []ReportTupleSection{
+		ReportTupleSectionReview,
+		ReportTupleSectionMerge,
+		ReportTupleSectionPull,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ReportTupleSection) MarshalText() ([]byte, error) {
+	switch s {
+	case ReportTupleSectionReview:
+		return []byte(s), nil
+	case ReportTupleSectionMerge:
+		return []byte(s), nil
+	case ReportTupleSectionPull:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ReportTupleSection) UnmarshalText(data []byte) error {
+	switch ReportTupleSection(data) {
+	case ReportTupleSectionReview:
+		*s = ReportTupleSectionReview
+		return nil
+	case ReportTupleSectionMerge:
+		*s = ReportTupleSectionMerge
+		return nil
+	case ReportTupleSectionPull:
+		*s = ReportTupleSectionPull
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type Reports []ReportsItem
+
+// ReportsItem represents sum type.
+type ReportsItem struct {
+	Type        ReportsItemType // switch on this field
+	ReportTuple ReportTuple
+}
+
+// ReportsItemType is oneOf type of ReportsItem.
+type ReportsItemType string
+
+// Possible values for ReportsItemType.
+const (
+	ReportTupleReportsItem ReportsItemType = "ReportTuple"
+)
+
+// IsReportTuple reports whether ReportsItem is ReportTuple.
+func (s ReportsItem) IsReportTuple() bool { return s.Type == ReportTupleReportsItem }
+
+// SetReportTuple sets ReportsItem to ReportTuple.
+func (s *ReportsItem) SetReportTuple(v ReportTuple) {
+	s.Type = ReportTupleReportsItem
+	s.ReportTuple = v
+}
+
+// GetReportTuple returns ReportTuple and true boolean if ReportsItem is ReportTuple.
+func (s ReportsItem) GetReportTuple() (v ReportTuple, ok bool) {
+	if !s.IsReportTuple() {
+		return v, false
+	}
+	return s.ReportTuple, true
+}
+
+// NewReportTupleReportsItem returns new ReportsItem from ReportTuple.
+func NewReportTupleReportsItem(v ReportTuple) ReportsItem {
+	var s ReportsItem
+	s.SetReportTuple(v)
+	return s
+}
+
+// Ref: #/components/schemas/Result
+type Result struct {
+	Summary OptString `json:"summary"`
+}
+
+// GetSummary returns the value of Summary.
+func (s *Result) GetSummary() OptString {
+	return s.Summary
+}
+
+// SetSummary sets the value of Summary.
+func (s *Result) SetSummary(val OptString) {
+	s.Summary = val
 }

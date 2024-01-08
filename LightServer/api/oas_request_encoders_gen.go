@@ -12,7 +12,7 @@ import (
 )
 
 func encodeReportPostRequest(
-	req *ReportPostReq,
+	req Reports,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

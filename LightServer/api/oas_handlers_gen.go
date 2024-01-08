@@ -76,7 +76,7 @@ func (s *Server) handleReportPostRequest(args [0]string, argsEscaped bool, w htt
 		}
 	}()
 
-	var response ReportPostOK
+	var response *Result
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -89,9 +89,9 @@ func (s *Server) handleReportPostRequest(args [0]string, argsEscaped bool, w htt
 		}
 
 		type (
-			Request  = *ReportPostReq
+			Request  = Reports
 			Params   = struct{}
-			Response = ReportPostOK
+			Response = *Result
 		)
 		response, err = middleware.HookMiddleware[
 			Request,

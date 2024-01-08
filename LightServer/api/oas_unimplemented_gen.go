@@ -18,7 +18,7 @@ var _ Handler = UnimplementedHandler{}
 // Reports the current status for monitored tuple.
 //
 // POST /report
-func (UnimplementedHandler) ReportPost(ctx context.Context, req *ReportPostReq) (r ReportPostOK, _ error) {
+func (UnimplementedHandler) ReportPost(ctx context.Context, req Reports) (r *Result, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

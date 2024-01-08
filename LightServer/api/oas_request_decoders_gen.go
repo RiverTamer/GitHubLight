@@ -16,7 +16,7 @@ import (
 )
 
 func (s *Server) decodeReportPostRequest(r *http.Request) (
-	req *ReportPostReq,
+	req Reports,
 	close func() error,
 	rerr error,
 ) {
@@ -55,7 +55,7 @@ func (s *Server) decodeReportPostRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request ReportPostReq
+		var request Reports
 		if err := func() error {
 			if err := request.Decode(d); err != nil {
 				return err
@@ -72,7 +72,15 @@ func (s *Server) decodeReportPostRequest(r *http.Request) (
 			}
 			return req, close, err
 		}
-		return &request, close, nil
+		if err := func() error {
+			if err := request.Validate(); err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			return req, close, errors.Wrap(err, "validate")
+		}
+		return request, close, nil
 	default:
 		return req, close, validate.InvalidContentType(ct)
 	}

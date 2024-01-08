@@ -3,7 +3,6 @@
 package api
 
 import (
-	"bytes"
 	"io"
 	"mime"
 	"net/http"
@@ -15,7 +14,7 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func decodeReportPostResponse(resp *http.Response) (res ReportPostOK, _ error) {
+func decodeReportPostResponse(resp *http.Response) (res *Result, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -24,15 +23,31 @@ func decodeReportPostResponse(resp *http.Response) (res ReportPostOK, _ error) {
 			return res, errors.Wrap(err, "parse media type")
 		}
 		switch {
-		case ct == "text/plain":
-			reader := resp.Body
-			b, err := io.ReadAll(reader)
+		case ct == "application/json":
+			buf, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return res, err
 			}
+			d := jx.DecodeBytes(buf)
 
-			response := ReportPostOK{Data: bytes.NewReader(b)}
-			return response, nil
+			var response Result
+			if err := func() error {
+				if err := response.Decode(d); err != nil {
+					return err
+				}
+				if err := d.Skip(); err != io.EOF {
+					return errors.New("unexpected trailing data")
+				}
+				return nil
+			}(); err != nil {
+				err = &ogenerrors.DecodeBodyError{
+					ContentType: ct,
+					Body:        buf,
+					Err:         err,
+				}
+				return res, err
+			}
+			return &response, nil
 		default:
 			return res, validate.InvalidContentType(ct)
 		}

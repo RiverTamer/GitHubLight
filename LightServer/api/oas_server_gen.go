@@ -13,7 +13,7 @@ type Handler interface {
 	// Reports the current status for monitored tuple.
 	//
 	// POST /report
-	ReportPost(ctx context.Context, req *ReportPostReq) (ReportPostOK, error)
+	ReportPost(ctx context.Context, req Reports) (*Result, error)
 	// NewError creates *ErrorStatusCode from error returned by handler.
 	//
 	// Used for common default response.
