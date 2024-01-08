@@ -20,12 +20,15 @@ type apiService struct {
 	mux sync.Mutex
 }
 
-func (s *apiService) ReportPost(ctx context.Context, req *api.ReportPostReq) (api.ReportPostOK, error) {
+func (s *apiService) ReportPost(ctx context.Context, req api.Reports) (*api.Result, error) {
 	s.mux.Lock()
-	log.Printf("ReportPost() %s %s %s %d", req.Owner, req.Repository, req.Section, req.Age)
 	defer s.mux.Unlock()
-	return api.ReportPostOK{
-		Data: nil,
+
+	return &api.Result{
+		Summary: api.OptString{
+			Value: "Success",
+			Set:   true,
+		},
 	}, nil
 }
 
