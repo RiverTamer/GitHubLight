@@ -1,0 +1,52 @@
+---
+openapi: 3.0.0
+info:
+  title: Github Light Client/Server API
+  # yamllint disable-line rule:line-length
+  description: Used by clients to notify the GitHubLightServer of the current status for PRs requiring reviews or merge, and local branches requiring pulls
+  version: 0.0.1
+
+servers:
+  - url: https://localhost:8080/v1
+    description: Local Machine
+  - url: https://ghls.karlkraft.com/v1
+    description: Production Server
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        summary:
+          type: string
+
+paths:
+  /report:
+    post:
+      summary: Reports the current status for monitored tuple
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                repository:
+                  type: string
+                section:
+                  type: string
+                age:
+                  type: integer
+      responses:
+        '200':
+          description: Accepted
+          content:
+            text/plain:
+        default:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
