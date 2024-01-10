@@ -3,12 +3,13 @@
 //  GitHubLight
 //
 //  Created by Karl Kraft on 12/29/2023
-//  Copyright 2023 Karl Kraft. All rights reserved.
+//  Copyright 2023-2024 Karl Kraft. All rights reserved
 //
 
 package main
 
 import (
+	"LightServer/arduino"
 	"context"
 	"fmt"
 	"github.com/google/go-github/v57/github"
@@ -55,7 +56,7 @@ func main() {
 
 }
 
-func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client) GitHubLight.LightCommand {
+func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client) arduino.LightCommand {
 	options := github.SearchOptions{
 		Sort:      "created",
 		Order:     "asc",
@@ -75,12 +76,13 @@ func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client
 		now := time.Now()
 		age := math.Abs(ts.Sub(now).Hours())
 		log.Printf("Oldest PR is %0.0f hours old.", age)
+		log.Printf("%v", *oldestIssue.CommentsURL)
 		idx := int(age)
 		if idx > 7 {
 			idx = 7
 		}
 		tone := palette[idx]
-		return GitHubLight.LightCommand{
+		return arduino.LightCommand{
 			Start:  0,
 			Length: 3,
 			Red:    tone[0],
@@ -89,7 +91,7 @@ func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client
 		}
 	} else {
 		log.Printf("No PRs need review.")
-		return GitHubLight.LightCommand{
+		return arduino.LightCommand{
 			Start:  0,
 			Length: 3,
 			Red:    0x00,
@@ -104,7 +106,7 @@ func lightTest(conn net.Conn) {
 
 	for x := 8; x < 9; x++ {
 		set := palette[x]
-		lightPattern := GitHubLight.LightCommand{
+		lightPattern := arduino.LightCommand{
 			Start:  0,
 			Length: 12,
 			Red:    set[0],

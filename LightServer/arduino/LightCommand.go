@@ -3,10 +3,10 @@
 //  GitHubLight
 //
 //  Created by Karl Kraft on 12/30/2023
-//  Copyright 2023 Karl Kraft. All rights reserved.
+//  Copyright 2023-2024 Karl Kraft. All rights reserved
 //
 
-package GitHubLight
+package arduino
 
 import (
 	"fmt"
