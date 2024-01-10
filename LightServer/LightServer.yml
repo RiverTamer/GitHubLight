@@ -15,7 +15,18 @@ servers:
 components:
 
   schemas:
+    Status:
+      type: object
+      properties:
+        reports:
+          $ref: "#/components/schemas/Reports"
+
     ReportTuple:
+      required:
+        - owner
+        - repository
+        - section
+        - age
       type: object
       properties:
         owner:
@@ -48,6 +59,41 @@ components:
           type: string
 
 paths:
+  /status:
+    get:
+      summary: Returns current status
+      responses:
+        '200':
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        default:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reset:
+    get:
+      summary: Resets the system
+      responses:
+        '200':
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+        default:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
   /report:
     post:
       summary: Reports the current status for monitored tuple
