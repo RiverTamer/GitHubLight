@@ -3,7 +3,7 @@
 //  GitHubLight
 //
 //  Created by Karl Kraft on 12/28/2023
-//  Copyright 2023 Karl Kraft. All rights reserved.
+//  Copyright 2023-2024 Karl Kraft. All rights reserved
 //
 
 #include "secrets.h"
@@ -29,11 +29,19 @@ WiFiUDP Udp;
 //
 typedef struct {
   int16_t magic;
-  int8_t lightStart;
-  int8_t lightRange;
-  int8_t red;
-  int8_t green;
-  int8_t blue;
+
+  int8_t red1;
+  int8_t green1;
+  int8_t blue1;
+
+  int8_t red2;
+  int8_t green2;
+  int8_t blue2;
+
+  int8_t red3;
+  int8_t green3;
+  int8_t blue3;
+
   int8_t padding;
 } Packet;
 
@@ -44,7 +52,8 @@ Packet packetBuffer;
 //
 //  LEDs
 //
-#define NUM_LEDS 12
+#define LEDS_PER_SECTION 6
+#define NUM_LEDS LEDS_PER_SECTION * 3
 #define LED_PIN 6
 CRGB leds[NUM_LEDS];
 
@@ -144,16 +153,10 @@ void loop() {
     return;
   }
 
-  for (int x = 0; x < packetBuffer.lightRange; x++) {
-    int idx = x + packetBuffer.lightStart;
-    if (idx > NUM_LEDS) {
-      continue;
-    }
-    leds[idx] = CRGB(packetBuffer.red, packetBuffer.green, packetBuffer.blue);
+  for (int x = 0; x < LEDS_PER_SECTION; x++) {
+    leds[x] = CRGB(packetBuffer.red1, packetBuffer.green1, packetBuffer.blue1);
+    leds[x + LEDS_PER_SECTION] = CRGB(packetBuffer.red2, packetBuffer.green2, packetBuffer.blue2);
+    leds[x + LEDS_PER_SECTION * 2] = CRGB(packetBuffer.red3, packetBuffer.green3, packetBuffer.blue3);
   }
   FastLED.show();
-  // Serial.println("Updated...");
-  // char buffer[128];
-  // sprintf(buffer,"s=%d, l=%d, r=%02x, g=%02x, b=%02x",packetBuffer.lightStart, packetBuffer.lightRange,packetBuffer.red,packetBuffer.green,packetBuffer.blue);
-  // Serial.println(buffer);
 }

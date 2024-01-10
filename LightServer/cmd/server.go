@@ -47,6 +47,19 @@ var palette = [9]colorLevels{
 	{threshold: 3600 * 7, red: 0x80, green: 0, blue: 0},
 }
 
+func (s *apiService) ResetGet(_ context.Context) (*api.Result, error) {
+	return &api.Result{
+		Summary: api.OptString{
+			Value: "TO BE IMPLEMENTED",
+			Set:   true,
+		},
+	}, nil
+}
+
+func (s *apiService) StatusGet(_ context.Context) (*api.Status, error) {
+	return &api.Status{}, nil
+}
+
 func (s *apiService) ReportPost(_ context.Context, req api.Reports) (*api.Result, error) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
@@ -94,44 +107,34 @@ func updateLights(s *apiService) {
 		}
 	}
 
+	lightCommand := arduino.LightCommand{}
 	for i := len(palette) - 1; i >= 0; i-- {
 		if maxReview >= palette[i].threshold {
-			arduino.LightCommand{
-				Start:  0,
-				Length: 4,
-				Red:    palette[i].red,
-				Green:  palette[i].green,
-				Blue:   palette[i].blue,
-			}.Send(s.arduinoPort)
+			lightCommand.Red1 = palette[i].red
+			lightCommand.Green1 = palette[i].green
+			lightCommand.Blue1 = palette[i].blue
 			break
 		}
 	}
 	time.Sleep(1 * time.Second)
 	for i := len(palette) - 1; i >= 0; i-- {
 		if maxMerge >= palette[i].threshold {
-			arduino.LightCommand{
-				Start:  4,
-				Length: 4,
-				Red:    palette[i].red,
-				Green:  palette[i].green,
-				Blue:   palette[i].blue,
-			}.Send(s.arduinoPort)
+			lightCommand.Red2 = palette[i].red
+			lightCommand.Green2 = palette[i].green
+			lightCommand.Blue2 = palette[i].blue
 			break
 		}
 	}
 	time.Sleep(1 * time.Second)
 	for i := len(palette) - 1; i >= 0; i-- {
 		if maxPull >= palette[i].threshold {
-			arduino.LightCommand{
-				Start:  8,
-				Length: 4,
-				Red:    palette[i].red,
-				Green:  palette[i].green,
-				Blue:   palette[i].blue,
-			}.Send(s.arduinoPort)
+			lightCommand.Red3 = palette[i].red
+			lightCommand.Green3 = palette[i].green
+			lightCommand.Blue3 = palette[i].blue
 			break
 		}
 	}
+	lightCommand.Send(s.arduinoPort)
 
 }
 
@@ -174,11 +177,15 @@ func main() {
 
 	for i := len(palette) - 1; i >= 0; i-- {
 		arduino.LightCommand{
-			Start:  0,
-			Length: 12,
-			Red:    palette[i].red,
-			Green:  palette[i].green,
-			Blue:   palette[i].blue,
+			Red1:   palette[i].red,
+			Green1: palette[i].green,
+			Blue1:  palette[i].blue,
+			Red2:   palette[i].red,
+			Green2: palette[i].green,
+			Blue2:  palette[i].blue,
+			Red3:   palette[i].red,
+			Green3: palette[i].green,
+			Blue3:  palette[i].blue,
 		}.Send(service.arduinoPort)
 		time.Sleep(500 * time.Millisecond)
 	}

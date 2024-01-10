@@ -14,23 +14,35 @@ import (
 )
 
 type LightCommand struct {
-	Start  uint8
-	Length uint8
-	Red    uint8
-	Green  uint8
-	Blue   uint8
+	Red1   uint8
+	Green1 uint8
+	Blue1  uint8
+
+	Red2   uint8
+	Green2 uint8
+	Blue2  uint8
+
+	Red3   uint8
+	Green3 uint8
+	Blue3  uint8
 }
 
 func (packet LightCommand) Send(connection net.Conn) {
-	buffer := make([]byte, 8)
+	buffer := make([]byte, 12)
 	buffer[0] = 0x34
 	buffer[1] = 0x12
-	buffer[2] = packet.Start
-	buffer[3] = packet.Length
-	buffer[4] = packet.Red
-	buffer[5] = packet.Green
-	buffer[6] = packet.Blue
-	buffer[7] = 0x00
+
+	buffer[2] = packet.Red1
+	buffer[3] = packet.Green1
+	buffer[4] = packet.Blue1
+
+	buffer[5] = packet.Red1
+	buffer[6] = packet.Green1
+	buffer[7] = packet.Blue1
+
+	buffer[8] = packet.Red1
+	buffer[9] = packet.Green1
+	buffer[10] = packet.Blue1
 
 	_, err := connection.Write(buffer)
 	if err != nil {
