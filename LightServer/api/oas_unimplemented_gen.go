@@ -22,6 +22,24 @@ func (UnimplementedHandler) ReportPost(ctx context.Context, req Reports) (r *Res
 	return r, ht.ErrNotImplemented
 }
 
+// ResetGet implements GET /reset operation.
+//
+// Resets the system.
+//
+// GET /reset
+func (UnimplementedHandler) ResetGet(ctx context.Context) (r *Result, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// StatusGet implements GET /status operation.
+//
+// Returns current status.
+//
+// GET /status
+func (UnimplementedHandler) StatusGet(ctx context.Context) (r *Status, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // NewError creates *ErrorStatusCode from error returned by handler.
 //
 // Used for common default response.

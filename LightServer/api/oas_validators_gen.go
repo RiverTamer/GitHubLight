@@ -17,15 +17,8 @@ func (s *ReportTuple) Validate() error {
 
 	var failures []validate.FieldError
 	if err := func() error {
-		if value, ok := s.Section.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
+		if err := s.Section.Validate(); err != nil {
+			return err
 		}
 		return nil
 	}(); err != nil {
@@ -55,9 +48,6 @@ func (s ReportTupleSection) Validate() error {
 
 func (s Reports) Validate() error {
 	alias := ([]ReportsItem)(s)
-	if alias == nil {
-		return errors.New("nil is invalid value")
-	}
 	var failures []validate.FieldError
 	for i, elem := range alias {
 		if err := func() error {
@@ -88,4 +78,27 @@ func (s ReportsItem) Validate() error {
 	default:
 		return errors.Errorf("invalid type %q", s.Type)
 	}
+}
+
+func (s *Status) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Reports.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "reports",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
 }

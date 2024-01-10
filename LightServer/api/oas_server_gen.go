@@ -14,6 +14,18 @@ type Handler interface {
 	//
 	// POST /report
 	ReportPost(ctx context.Context, req Reports) (*Result, error)
+	// ResetGet implements GET /reset operation.
+	//
+	// Resets the system.
+	//
+	// GET /reset
+	ResetGet(ctx context.Context) (*Result, error)
+	// StatusGet implements GET /status operation.
+	//
+	// Returns current status.
+	//
+	// GET /status
+	StatusGet(ctx context.Context) (*Status, error)
 	// NewError creates *ErrorStatusCode from error returned by handler.
 	//
 	// Used for common default response.

@@ -18,7 +18,9 @@ func encodeReportPostRequest(
 	const contentType = "application/json"
 	e := new(jx.Encoder)
 	{
-		req.Encode(e)
+		if req != nil {
+			req.Encode(e)
+		}
 	}
 	encoded := e.Bytes()
 	ht.SetBody(r, bytes.NewReader(encoded), contentType)

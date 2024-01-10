@@ -48,23 +48,83 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/report"
-			if l := len("/report"); len(elem) >= l && elem[0:l] == "/report" {
+		case '/': // Prefix: "/"
+			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				// Leaf node.
-				switch r.Method {
-				case "POST":
-					s.handleReportPostRequest([0]string{}, elemIsEscaped, w, r)
-				default:
-					s.notAllowed(w, r, "POST")
+				break
+			}
+			switch elem[0] {
+			case 'r': // Prefix: "re"
+				if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
+					elem = elem[l:]
+				} else {
+					break
 				}
 
-				return
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'p': // Prefix: "port"
+					if l := len("port"); len(elem) >= l && elem[0:l] == "port" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleReportPostRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+				case 's': // Prefix: "set"
+					if l := len("set"); len(elem) >= l && elem[0:l] == "set" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleResetGetRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+				}
+			case 's': // Prefix: "status"
+				if l := len("status"); len(elem) >= l && elem[0:l] == "status" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					// Leaf node.
+					switch r.Method {
+					case "GET":
+						s.handleStatusGetRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
 			}
 		}
 	}
@@ -146,26 +206,94 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/report"
-			if l := len("/report"); len(elem) >= l && elem[0:l] == "/report" {
+		case '/': // Prefix: "/"
+			if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
 			if len(elem) == 0 {
-				switch method {
-				case "POST":
-					// Leaf: ReportPost
-					r.name = "ReportPost"
-					r.summary = "Reports the current status for monitored tuple"
-					r.operationID = ""
-					r.pathPattern = "/report"
-					r.args = args
-					r.count = 0
-					return r, true
-				default:
-					return
+				break
+			}
+			switch elem[0] {
+			case 'r': // Prefix: "re"
+				if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'p': // Prefix: "port"
+					if l := len("port"); len(elem) >= l && elem[0:l] == "port" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "POST":
+							// Leaf: ReportPost
+							r.name = "ReportPost"
+							r.summary = "Reports the current status for monitored tuple"
+							r.operationID = ""
+							r.pathPattern = "/report"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+				case 's': // Prefix: "set"
+					if l := len("set"); len(elem) >= l && elem[0:l] == "set" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							// Leaf: ResetGet
+							r.name = "ResetGet"
+							r.summary = "Resets the system"
+							r.operationID = ""
+							r.pathPattern = "/reset"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+				}
+			case 's': // Prefix: "status"
+				if l := len("status"); len(elem) >= l && elem[0:l] == "status" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						// Leaf: StatusGet
+						r.name = "StatusGet"
+						r.summary = "Returns current status"
+						r.operationID = ""
+						r.pathPattern = "/status"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
 				}
 			}
 		}

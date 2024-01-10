@@ -53,98 +53,6 @@ func (s *ErrorStatusCode) SetResponse(val Error) {
 	s.Response = val
 }
 
-// NewOptInt returns new OptInt with value set to v.
-func NewOptInt(v int) OptInt {
-	return OptInt{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptInt is optional int.
-type OptInt struct {
-	Value int
-	Set   bool
-}
-
-// IsSet returns true if OptInt was set.
-func (o OptInt) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptInt) Reset() {
-	var v int
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptInt) SetTo(v int) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptInt) Get() (v int, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptInt) Or(d int) int {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptReportTupleSection returns new OptReportTupleSection with value set to v.
-func NewOptReportTupleSection(v ReportTupleSection) OptReportTupleSection {
-	return OptReportTupleSection{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptReportTupleSection is optional ReportTupleSection.
-type OptReportTupleSection struct {
-	Value ReportTupleSection
-	Set   bool
-}
-
-// IsSet returns true if OptReportTupleSection was set.
-func (o OptReportTupleSection) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptReportTupleSection) Reset() {
-	var v ReportTupleSection
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptReportTupleSection) SetTo(v ReportTupleSection) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptReportTupleSection) Get() (v ReportTupleSection, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptReportTupleSection) Or(d ReportTupleSection) ReportTupleSection {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -193,49 +101,49 @@ func (o OptString) Or(d string) string {
 
 // Ref: #/components/schemas/ReportTuple
 type ReportTuple struct {
-	Owner      OptString             `json:"owner"`
-	Repository OptString             `json:"repository"`
-	Section    OptReportTupleSection `json:"section"`
-	Age        OptInt                `json:"age"`
+	Owner      string             `json:"owner"`
+	Repository string             `json:"repository"`
+	Section    ReportTupleSection `json:"section"`
+	Age        int                `json:"age"`
 }
 
 // GetOwner returns the value of Owner.
-func (s *ReportTuple) GetOwner() OptString {
+func (s *ReportTuple) GetOwner() string {
 	return s.Owner
 }
 
 // GetRepository returns the value of Repository.
-func (s *ReportTuple) GetRepository() OptString {
+func (s *ReportTuple) GetRepository() string {
 	return s.Repository
 }
 
 // GetSection returns the value of Section.
-func (s *ReportTuple) GetSection() OptReportTupleSection {
+func (s *ReportTuple) GetSection() ReportTupleSection {
 	return s.Section
 }
 
 // GetAge returns the value of Age.
-func (s *ReportTuple) GetAge() OptInt {
+func (s *ReportTuple) GetAge() int {
 	return s.Age
 }
 
 // SetOwner sets the value of Owner.
-func (s *ReportTuple) SetOwner(val OptString) {
+func (s *ReportTuple) SetOwner(val string) {
 	s.Owner = val
 }
 
 // SetRepository sets the value of Repository.
-func (s *ReportTuple) SetRepository(val OptString) {
+func (s *ReportTuple) SetRepository(val string) {
 	s.Repository = val
 }
 
 // SetSection sets the value of Section.
-func (s *ReportTuple) SetSection(val OptReportTupleSection) {
+func (s *ReportTuple) SetSection(val ReportTupleSection) {
 	s.Section = val
 }
 
 // SetAge sets the value of Age.
-func (s *ReportTuple) SetAge(val OptInt) {
+func (s *ReportTuple) SetAge(val int) {
 	s.Age = val
 }
 
@@ -340,4 +248,19 @@ func (s *Result) GetSummary() OptString {
 // SetSummary sets the value of Summary.
 func (s *Result) SetSummary(val OptString) {
 	s.Summary = val
+}
+
+// Ref: #/components/schemas/Status
+type Status struct {
+	Reports Reports `json:"reports"`
+}
+
+// GetReports returns the value of Reports.
+func (s *Status) GetReports() Reports {
+	return s.Reports
+}
+
+// SetReports sets the value of Reports.
+func (s *Status) SetReports(val Reports) {
+	s.Reports = val
 }
