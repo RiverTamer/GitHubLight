@@ -49,6 +49,9 @@ var palette = [9]colorLevels{
 }
 
 func (s *apiService) ResetGet(_ context.Context) (*api.Result, error) {
+	s.reports = map[string]api.ReportTuple{}
+	updateLights(s)
+
 	return &api.Result{
 		Summary: api.OptString{
 			Value: "TO BE IMPLEMENTED",
@@ -176,7 +179,7 @@ func main() {
 	}
 	service.arduinoPort = conn
 
-	for i := len(palette) * 2; i >= 0; i-- {
+	for i := len(palette); i >= 0; i-- {
 		g1 := rand.Intn(len(palette))
 		g2 := rand.Intn(len(palette))
 		g3 := rand.Intn(len(palette))

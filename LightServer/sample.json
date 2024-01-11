@@ -3,12 +3,18 @@
   "owner": "KarlKraft",
   "repository": "GitHubLight",
   "section": "review",
-  "age": 0
+  "age": 1
+},
+{
+  "owner": "KarlKraft",
+  "repository": "GitHubLight",
+  "section": "merge",
+  "age": 40000
 },
 {
   "owner": "KarlKraft",
   "repository": "GitHubLight",
   "section": "pull",
-  "age": 400
+  "age": 0
 }
 ]
