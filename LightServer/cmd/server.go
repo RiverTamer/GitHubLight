@@ -23,10 +23,10 @@ import (
 )
 
 type apiService struct {
-	mux         sync.Mutex
-	reports     map[string]api.ReportTuple
-	settings    *arduino.Settings
-	arduinoPort net.Conn
+	mux           sync.Mutex
+	clientReports map[string]api.ClientReport
+	settings      *arduino.Settings
+	arduinoPort   net.Conn
 }
 
 type colorLevels struct {
@@ -49,7 +49,7 @@ var palette = [9]colorLevels{
 }
 
 func (s *apiService) ResetGet(_ context.Context) (*api.Result, error) {
-	s.reports = map[string]api.ReportTuple{}
+	clear(s.clientReports)
 	updateLights(s)
 
 	return &api.Result{
@@ -64,15 +64,11 @@ func (s *apiService) StatusGet(_ context.Context) (*api.Status, error) {
 	return &api.Status{}, nil
 }
 
-func (s *apiService) ReportPost(_ context.Context, req api.Reports) (*api.Result, error) {
+func (s *apiService) ReportPost(_ context.Context, req *api.ClientReport) (*api.Result, error) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
-	for _, item := range req {
-		if item.Type == api.ReportTupleReportsItem {
-			key := item.ReportTuple.Owner + "/" + item.ReportTuple.Repository + "/" + string(item.ReportTuple.Section)
-			s.reports[key] = item.ReportTuple
-		}
-	}
+
+	s.clientReports[req.Clientid] = *req
 
 	updateLights(s)
 
@@ -88,27 +84,32 @@ func updateLights(s *apiService) {
 	maxReview := 0
 	maxMerge := 0
 	maxPull := 0
-	for _, item := range s.reports {
-		switch item.Section {
-		case api.ReportTupleSectionReview:
-			{
-				if item.Age > maxReview {
-					maxReview = item.Age
-				}
-			}
-		case api.ReportTupleSectionMerge:
-			{
-				if item.Age > maxMerge {
-					maxMerge = item.Age
-				}
-			}
-		case api.ReportTupleSectionPull:
-			{
-				if item.Age > maxPull {
-					maxPull = item.Age
+	for _, clientReport := range s.clientReports {
+		for _, item := range clientReport.Reports {
+			if item.Type == api.ReportTupleReportsItem {
+				switch item.ReportTuple.Section {
+				case api.ReportTupleSectionReview:
+					{
+						if item.ReportTuple.Age > maxReview {
+							maxReview = item.ReportTuple.Age
+						}
+					}
+				case api.ReportTupleSectionMerge:
+					{
+						if item.ReportTuple.Age > maxMerge {
+							maxMerge = item.ReportTuple.Age
+						}
+					}
+				case api.ReportTupleSectionPull:
+					{
+						if item.ReportTuple.Age > maxPull {
+							maxPull = item.ReportTuple.Age
+						}
+					}
 				}
 			}
 		}
+
 	}
 
 	lightCommand := arduino.LightCommand{}
@@ -168,7 +169,7 @@ func readSettings() *arduino.Settings {
 
 func main() {
 	service := &apiService{
-		reports: map[string]api.ReportTuple{},
+		clientReports: map[string]api.ClientReport{},
 	}
 	service.settings = readSettings()
 	addr := fmt.Sprintf("%s:%d", service.settings.BoxIP, service.settings.BoxPort)
