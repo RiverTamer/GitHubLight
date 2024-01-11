@@ -14,6 +14,8 @@ import (
 )
 
 type Settings struct {
+	LightServer string
+	ClientID    string
 	GithubToken string `toml:"GITHUB_ACCESS_TOKEN"`
 	Username    string
 }
@@ -23,6 +25,12 @@ func ReadSettings(path string) *Settings {
 	meta, err := toml.DecodeFile(path, s)
 	if err != nil {
 		log.Fatalf("Unable to read file %s (%v)", path, err)
+	}
+	if !meta.IsDefined("LightServer") {
+		log.Fatalf("Specify LightServer in configuration (e.g. LightServer=\"http://localhost:8080/\"")
+	}
+	if !meta.IsDefined("ClientID") {
+		log.Fatalf("Specify ClientID in configuration")
 	}
 	if !meta.IsDefined("GITHUB_ACCESS_TOKEN") {
 		log.Fatalf("Specify GITHUB_ACCESS_TOKEN in configuration (e.g. GITHUB_ACCESS_TOKEN=\"github_pat_xxxx...\"")

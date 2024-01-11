@@ -9,42 +9,36 @@
 package main
 
 import (
-	"LightServer/arduino"
 	"context"
-	"fmt"
 	"github.com/google/go-github/v57/github"
 	"karlkraft.com/GitHubLight"
+	"karlkraft.com/GitHubLight/api"
 	"log"
-	"math"
-	"net"
+	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
 func main() {
 	settings := readSettings()
-
-	addr := fmt.Sprintf("%s:%d", settings.BoxIP, settings.BoxPort)
-	conn, err := net.Dial("udp", addr)
+	client, err := api.NewClient(settings.LightServer)
 	if err != nil {
-		log.Fatalf("Could not connect to %s (%v)", addr, err)
-		return
+		log.Fatalf("Unable to create LightServer client %v", err)
 	}
-
-	lightTest(conn)
-
-	client := github.NewClient(nil).WithAuthToken(settings.GithubToken)
-
-	// set REVIEW light
-	lightPattern := lightCommandForReview(settings, client)
-	lightPattern.Send(conn)
-	// get merge value
-	// check for pulls
-	// check for commit strength
+	clientReport := githubScan(settings)
+	_, err = client.ReportPost(context.Background(), &clientReport)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
 
 }
 
-func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client) arduino.LightCommand {
+func githubScan(settings *GitHubLight.Settings) api.ClientReport {
+	clientReport := api.ClientReport{
+		Clientid: settings.ClientID,
+	}
+	gh := github.NewClient(nil).WithAuthToken(settings.GithubToken)
 	options := github.SearchOptions{
 		Sort:      "created",
 		Order:     "asc",
@@ -54,57 +48,49 @@ func lightCommandForReview(settings *GitHubLight.Settings, client *github.Client
 			PerPage: 30,
 		},
 	}
-	issues, _, err := client.Search.Issues(context.Background(), "is:open is:pr review-requested:"+settings.Username, &options)
+
+	issues, _, err := gh.Search.Issues(context.Background(), "is:open is:pr review-requested:"+settings.Username, &options)
 	if err != nil {
 		log.Fatalf("Could not fetch issues (%v)", err)
 	}
-	if len(issues.Issues) > 0 {
-		oldestIssue := issues.Issues[0]
-		ts := oldestIssue.CreatedAt
-		now := time.Now()
-		age := math.Abs(ts.Sub(now).Hours())
-		log.Printf("Oldest PR is %0.0f hours old.", age)
-		log.Printf("%v", *oldestIssue.CommentsURL)
-		idx := int(age)
-		if idx > 7 {
-			idx = 7
-		}
-		tone := palette[idx]
-		return arduino.LightCommand{
-			Start:  0,
-			Length: 3,
-			Red:    tone[0],
-			Green:  tone[1],
-			Blue:   tone[2],
-		}
-	} else {
-		log.Printf("No PRs need review.")
-		return arduino.LightCommand{
-			Start:  0,
-			Length: 3,
-			Red:    0x00,
-			Green:  0x00,
-			Blue:   0x00,
-		}
+	reviewIssues := make([]api.ReportsItem, 0)
+	for _, issue := range issues.Issues {
+		reviewIssues = append(reviewIssues,
+			api.ReportsItem{
+				Type: api.ReportTupleReportsItem,
+				ReportTuple: api.ReportTuple{
+					Owner:      owner(issue.RepositoryURL),
+					Repository: repository(issue.RepositoryURL),
+					Section:    api.ReportTupleSectionReview,
+					Age:        age(issue.CreatedAt),
+				},
+			})
 	}
-
+	clientReport.Reports = reviewIssues
+	return clientReport
 }
 
-func lightTest(conn net.Conn) {
+func age(ts *github.Timestamp) int {
+	elapsed := time.Since(ts.Time)
+	return int(elapsed.Seconds())
+}
 
-	for x := 8; x < 9; x++ {
-		set := palette[x]
-		lightPattern := arduino.LightCommand{
-			Start:  0,
-			Length: 12,
-			Red:    set[0],
-			Green:  set[1],
-			Blue:   set[2],
-		}
-		lightPattern.Send(conn)
-		time.Sleep(time.Millisecond * 1000)
+func repository(repoURL *string) string {
+	u, err := url.Parse(*repoURL)
+	if err != nil {
+		return ""
 	}
+	pathComponents := strings.Split(u.Path, "/")
+	return pathComponents[len(pathComponents)-1]
+}
 
+func owner(repoURL *string) string {
+	u, err := url.Parse(*repoURL)
+	if err != nil {
+		return ""
+	}
+	pathComponents := strings.Split(u.Path, "/")
+	return pathComponents[len(pathComponents)-2]
 }
 
 func readSettings() *GitHubLight.Settings {
