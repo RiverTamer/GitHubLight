@@ -1,0 +1,44 @@
+---
+name: Pre-commit auto-update
+
+
+on:                          # yamllint disable-line rule:truthy
+  schedule:
+    - cron: '09 2 * * 6'
+  workflow_dispatch:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '!**'
+
+jobs:
+
+  auto-update:
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: pre-commit autoupdate
+        shell: bash
+
+      - uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update/pre-commit-hooks
+          title: Update pre-commit hooks
+          commit-message: "chore: update pre-commit hooks"
+          committer: Karl Kraft <karl@karlkraft.com>
+          author: Karl Kraft <karl@karlkraft.com>
+          body: Update versions of pre-commit hooks to latest version.
+          add-paths: |
+            .pre-commit-config.yaml
