@@ -8,7 +8,15 @@
 
 #include "secrets.h"
 #include <SharedSecrets.h>
-#include <WiFiS3.h>
+#include <ESP8266WiFi.h>  // Include the Wi-Fi library
+#include <WiFiUdp.h>
+
+// Rearange digital pin order on baord ESP8266, and set to not use bitbanging
+// https://github.com/FastLED/FastLED/wiki/ESP8266-notes
+#define FASTLED_ESP8266_NODEMCU_PIN_ORDER
+#define FASTLED_ALL_PINS_HARDWARE_SPI
+
+
 #include <FastLED.h>
 //
 // WIFI
@@ -52,56 +60,24 @@ Packet packetBuffer;
 //
 //  LEDs
 //
-#define LEDS_PER_SECTION 6
+#define LEDS_PER_SECTION 4
 #define NUM_LEDS LEDS_PER_SECTION * 3
-#define LED_PIN 6
+#define LED_PIN 2
 CRGB leds[NUM_LEDS];
 
 
 void setup() {
-
-  // Configure LEDs
-  FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-  FastLED.setCorrection(TypicalLEDStrip);
-  FastLED.setBrightness(255);
-  for (int x = 0; x < NUM_LEDS; x++) {
-    leds[x] = CRGB::Black;
-  }
-  FastLED.show();
-
-
   // wait for serial port
   Serial.begin(9600);
   while (!Serial) {
     ;
   }
-
   delay(1000);
+  FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setCorrection(TypicalLEDStrip);
+  FastLED.setBrightness(100);
 
-
-  // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE) {
-    Serial.println("WiFi module failed (WL_NO_MODULE)");
-    Serial.println(" >> HALTED <<");
-    while (true)
-      ;
-  }
-
-
-  String fv = WiFi.firmwareVersion();
-  if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
-    Serial.print("WiFi module failed (WIFI_FIRMWARE_LATEST_VERSION) board=");
-    Serial.print(fv);
-    Serial.print(" != ");
-    Serial.println(WIFI_FIRMWARE_LATEST_VERSION);
-
-    Serial.println(" >> HALTED <<");
-    while (true)
-      ;
-  }
-
-
-
+  Serial.println("started");
 
   while (true) {
     Serial.print("Connecting to: ");
@@ -123,10 +99,13 @@ void setup() {
   Serial.print(rssi);
   Serial.println(" dBm");
 
-
-  Serial.print("\nListening on port ");
-  Serial.println(localPort);
   Udp.begin(localPort);
+  for (int x = 0; x < NUM_LEDS; x++) {
+    leds[x] = CRGB(0, 0, 0);
+  }
+  FastLED.show();
+  FastLED.show();
+  delay(1000);
 }
 
 void loop() {
@@ -158,5 +137,6 @@ void loop() {
     leds[x + LEDS_PER_SECTION] = CRGB(packetBuffer.red2, packetBuffer.green2, packetBuffer.blue2);
     leds[x + LEDS_PER_SECTION * 2] = CRGB(packetBuffer.red3, packetBuffer.green3, packetBuffer.blue3);
   }
+  FastLED.show();
   FastLED.show();
 }
