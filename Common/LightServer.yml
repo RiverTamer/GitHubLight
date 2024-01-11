@@ -45,6 +45,17 @@ components:
         anyOf:
           - $ref: "#/components/schemas/ReportTuple"
 
+    ClientReport:
+      required:
+        - clientid
+        - reports
+      type: object
+      properties:
+        clientid:
+          type: string
+        reports:
+          $ref: "#/components/schemas/Reports"
+
     Result:
       type: object
       properties:
@@ -102,7 +113,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Reports"
+              $ref: "#/components/schemas/ClientReport"
 
       responses:
         '200':
