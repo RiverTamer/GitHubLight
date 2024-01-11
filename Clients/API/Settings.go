@@ -3,7 +3,7 @@
 //  GitHubLight
 //
 //  Created by Karl Kraft on 12/30/2023
-//  Copyright 2023 Karl Kraft. All rights reserved.
+//  Copyright 2023-2024 Karl Kraft. All rights reserved
 //
 
 package GitHubLight
@@ -16,8 +16,6 @@ import (
 type Settings struct {
 	GithubToken string `toml:"GITHUB_ACCESS_TOKEN"`
 	Username    string
-	BoxIP       string
-	BoxPort     uint16
 }
 
 func ReadSettings(path string) *Settings {
@@ -26,14 +24,11 @@ func ReadSettings(path string) *Settings {
 	if err != nil {
 		log.Fatalf("Unable to read file %s (%v)", path, err)
 	}
-	if !meta.IsDefined("BoxIP") {
-		log.Fatalf("Specify BoxIP in configuration (e.g. BoxIP=\"192.168.1.59\"")
-	}
-	if !meta.IsDefined("BoxPort") {
-		log.Fatalf("Specify BoxPort in configuration (e.g. BoxPort=49581")
-	}
 	if !meta.IsDefined("GITHUB_ACCESS_TOKEN") {
 		log.Fatalf("Specify GITHUB_ACCESS_TOKEN in configuration (e.g. GITHUB_ACCESS_TOKEN=\"github_pat_xxxx...\"")
+	}
+	if !meta.IsDefined("Username") {
+		log.Fatalf("Specify Username in configuration (e.g. Username=\"KarlKraft\"")
 	}
 	return s
 }
