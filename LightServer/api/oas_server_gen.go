@@ -13,7 +13,7 @@ type Handler interface {
 	// Reports the current status for monitored tuple.
 	//
 	// POST /report
-	ReportPost(ctx context.Context, req Reports) (*Result, error)
+	ReportPost(ctx context.Context, req *ClientReport) (*Result, error)
 	// ResetGet implements GET /reset operation.
 	//
 	// Resets the system.

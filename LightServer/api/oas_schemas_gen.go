@@ -12,6 +12,32 @@ func (s *ErrorStatusCode) Error() string {
 	return fmt.Sprintf("code %d: %+v", s.StatusCode, s.Response)
 }
 
+// Ref: #/components/schemas/ClientReport
+type ClientReport struct {
+	Clientid string  `json:"clientid"`
+	Reports  Reports `json:"reports"`
+}
+
+// GetClientid returns the value of Clientid.
+func (s *ClientReport) GetClientid() string {
+	return s.Clientid
+}
+
+// GetReports returns the value of Reports.
+func (s *ClientReport) GetReports() Reports {
+	return s.Reports
+}
+
+// SetClientid sets the value of Clientid.
+func (s *ClientReport) SetClientid(val string) {
+	s.Clientid = val
+}
+
+// SetReports sets the value of Reports.
+func (s *ClientReport) SetReports(val Reports) {
+	s.Reports = val
+}
+
 // Ref: #/components/schemas/Error
 type Error struct {
 	Summary OptString `json:"summary"`

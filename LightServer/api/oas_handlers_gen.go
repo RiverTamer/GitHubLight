@@ -89,7 +89,7 @@ func (s *Server) handleReportPostRequest(args [0]string, argsEscaped bool, w htt
 		}
 
 		type (
-			Request  = Reports
+			Request  = *ClientReport
 			Params   = struct{}
 			Response = *Result
 		)
