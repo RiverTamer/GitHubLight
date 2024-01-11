@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -175,20 +176,34 @@ func main() {
 	}
 	service.arduinoPort = conn
 
-	for i := len(palette) - 1; i >= 0; i-- {
+	for i := len(palette) * 2; i >= 0; i-- {
+		g1 := rand.Intn(len(palette))
+		g2 := rand.Intn(len(palette))
+		g3 := rand.Intn(len(palette))
 		arduino.LightCommand{
-			Red1:   palette[i].red,
-			Green1: palette[i].green,
-			Blue1:  palette[i].blue,
-			Red2:   palette[i].red,
-			Green2: palette[i].green,
-			Blue2:  palette[i].blue,
-			Red3:   palette[i].red,
-			Green3: palette[i].green,
-			Blue3:  palette[i].blue,
+			Red1:   palette[g1].red,
+			Green1: palette[g1].green,
+			Blue1:  palette[g1].blue,
+			Red2:   palette[g2].red,
+			Green2: palette[g2].green,
+			Blue2:  palette[g2].blue,
+			Red3:   palette[g3].red,
+			Green3: palette[g3].green,
+			Blue3:  palette[g3].blue,
 		}.Send(service.arduinoPort)
 		time.Sleep(500 * time.Millisecond)
 	}
+	arduino.LightCommand{
+		Red1:   0,
+		Green1: 0,
+		Blue1:  0,
+		Red2:   0,
+		Green2: 0,
+		Blue2:  0,
+		Red3:   0,
+		Green3: 0,
+		Blue3:  0,
+	}.Send(service.arduinoPort)
 
 	srv, err := api.NewServer(service)
 	if err != nil {

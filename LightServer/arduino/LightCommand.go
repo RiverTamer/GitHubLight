@@ -36,13 +36,13 @@ func (packet LightCommand) Send(connection net.Conn) {
 	buffer[3] = packet.Green1
 	buffer[4] = packet.Blue1
 
-	buffer[5] = packet.Red1
-	buffer[6] = packet.Green1
-	buffer[7] = packet.Blue1
+	buffer[5] = packet.Red2
+	buffer[6] = packet.Green2
+	buffer[7] = packet.Blue2
 
-	buffer[8] = packet.Red1
-	buffer[9] = packet.Green1
-	buffer[10] = packet.Blue1
+	buffer[8] = packet.Red3
+	buffer[9] = packet.Green3
+	buffer[10] = packet.Blue3
 
 	_, err := connection.Write(buffer)
 	if err != nil {
