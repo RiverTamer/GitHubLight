@@ -26,12 +26,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to create LightServer client %v", err)
 	}
-	clientReport := githubScan(settings)
-	_, err = client.ReportPost(context.Background(), &clientReport)
-	if err != nil {
-		log.Fatalf("%v", err)
+	for true {
+		log.Println("Scanning")
+		clientReport := githubScan(settings)
+		_, err = client.ReportPost(context.Background(), &clientReport)
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+		time.Sleep(time.Minute * 5)
 	}
-
 }
 
 func githubScan(settings *GitHubLight.Settings) api.ClientReport {
