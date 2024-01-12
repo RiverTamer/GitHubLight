@@ -56,9 +56,9 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 	if err != nil {
 		log.Fatalf("Could not fetch issues (%v)", err)
 	}
-	reviewIssues := make([]api.ReportsItem, 0)
+	reportIssues := make([]api.ReportsItem, 0)
 	for _, issue := range issues.Issues {
-		reviewIssues = append(reviewIssues,
+		reportIssues = append(reportIssues,
 			api.ReportsItem{
 				Type: api.ReportTupleReportsItem,
 				ReportTuple: api.ReportTuple{
@@ -69,7 +69,27 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 				},
 			})
 	}
-	clientReport.Reports = reviewIssues
+
+	issues, _, err = gh.Search.Issues(context.Background(), "is:open is:pr review:approved author:"+settings.Username, &options)
+	if err != nil {
+		log.Fatalf("Could not fetch issues (%v)", err)
+	}
+
+	for _, issue := range issues.Issues {
+		reportIssues = append(reportIssues,
+			api.ReportsItem{
+				Type: api.ReportTupleReportsItem,
+				ReportTuple: api.ReportTuple{
+					Owner:      owner(issue.RepositoryURL),
+					Repository: repository(issue.RepositoryURL),
+					Section:    api.ReportTupleSectionMerge,
+					Age:        age(issue.UpdatedAt),
+				},
+			})
+	}
+
+	//
+	clientReport.Reports = reportIssues
 	return clientReport
 }
 
