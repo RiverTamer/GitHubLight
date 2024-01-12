@@ -46,7 +46,7 @@ func (packet LightCommand) Send(connection net.Conn) {
 
 	_, err := connection.Write(buffer)
 	if err != nil {
-		fmt.Printf("Couldn't send LightCommand packet %v", err)
+		fmt.Printf("Couldn't send LightCommand packet %v\n", err)
 	}
 
 }
