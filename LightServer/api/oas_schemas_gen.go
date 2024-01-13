@@ -131,6 +131,7 @@ type ReportTuple struct {
 	Repository string             `json:"repository"`
 	Section    ReportTupleSection `json:"section"`
 	Age        int                `json:"age"`
+	Reference  string             `json:"reference"`
 }
 
 // GetOwner returns the value of Owner.
@@ -153,6 +154,11 @@ func (s *ReportTuple) GetAge() int {
 	return s.Age
 }
 
+// GetReference returns the value of Reference.
+func (s *ReportTuple) GetReference() string {
+	return s.Reference
+}
+
 // SetOwner sets the value of Owner.
 func (s *ReportTuple) SetOwner(val string) {
 	s.Owner = val
@@ -171,6 +177,11 @@ func (s *ReportTuple) SetSection(val ReportTupleSection) {
 // SetAge sets the value of Age.
 func (s *ReportTuple) SetAge(val int) {
 	s.Age = val
+}
+
+// SetReference sets the value of Reference.
+func (s *ReportTuple) SetReference(val string) {
+	s.Reference = val
 }
 
 type ReportTupleSection string

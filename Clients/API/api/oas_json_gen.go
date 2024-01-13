@@ -248,13 +248,18 @@ func (s *ReportTuple) encodeFields(e *jx.Encoder) {
 		e.FieldStart("age")
 		e.Int(s.Age)
 	}
+	{
+		e.FieldStart("reference")
+		e.Str(s.Reference)
+	}
 }
 
-var jsonFieldsNameOfReportTuple = [4]string{
+var jsonFieldsNameOfReportTuple = [5]string{
 	0: "owner",
 	1: "repository",
 	2: "section",
 	3: "age",
+	4: "reference",
 }
 
 // Decode decodes ReportTuple from json.
@@ -312,6 +317,18 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"age\"")
 			}
+		case "reference":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.Reference = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"reference\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -322,7 +339,7 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
