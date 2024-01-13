@@ -27,6 +27,7 @@ components:
         - repository
         - section
         - age
+        - reference
       type: object
       properties:
         owner:
@@ -38,6 +39,8 @@ components:
           enum: [review, merge, pull]
         age:
           type: integer
+        reference:
+          type: string
 
     Reports:
       type: array
