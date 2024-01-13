@@ -89,7 +89,7 @@ func (s *apiService) ReportPost(_ context.Context, req *api.ClientReport) (*api.
 func updateLights(s *apiService) {
 	maxReview := 0
 	maxMerge := 0
-	maxPull := 0
+	pullCount := 0
 	for _, clientReport := range s.clientReports {
 		for _, item := range clientReport.Reports {
 			if item.Type == api.ReportTupleReportsItem {
@@ -108,8 +108,8 @@ func updateLights(s *apiService) {
 					}
 				case api.ReportTupleSectionPull:
 					{
-						if item.ReportTuple.Age > maxPull {
-							maxPull = item.ReportTuple.Age
+						if item.ReportTuple.Age > 0 {
+							pullCount = pullCount + item.ReportTuple.Age
 						}
 					}
 				}
@@ -127,7 +127,6 @@ func updateLights(s *apiService) {
 			break
 		}
 	}
-	time.Sleep(1 * time.Second)
 	for i := len(palette) - 1; i >= 0; i-- {
 		if maxMerge >= palette[i].threshold {
 			lightCommand.Red2 = palette[i].red
@@ -136,14 +135,15 @@ func updateLights(s *apiService) {
 			break
 		}
 	}
-	time.Sleep(1 * time.Second)
-	for i := len(palette) - 1; i >= 0; i-- {
-		if maxPull >= palette[i].threshold {
-			lightCommand.Red3 = palette[i].red
-			lightCommand.Green3 = palette[i].green
-			lightCommand.Blue3 = palette[i].blue
-			break
-		}
+	if pullCount < 25 {
+		lightCommand.Blue3 = uint8(pullCount * 10)
+	} else if pullCount < 50 {
+		lightCommand.Green3 = 0xff
+	} else if pullCount < 75 {
+		lightCommand.Red3 = 0x80
+		lightCommand.Green3 = 0x80
+	} else {
+		lightCommand.Red3 = 0xff
 	}
 	lightCommand.Send(s.arduinoPort)
 
