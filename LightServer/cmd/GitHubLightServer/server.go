@@ -127,12 +127,16 @@ func updateLights(s *apiService) {
 			break
 		}
 	}
-	for i := len(palette) - 1; i >= 0; i-- {
-		if maxMerge >= palette[i].threshold {
-			lightCommand.Red2 = palette[i].red
-			lightCommand.Green2 = palette[i].green
-			lightCommand.Blue2 = palette[i].blue
-			break
+	if maxMerge == 1 {
+		lightCommand.Blue2 = 40
+	} else {
+		for i := len(palette) - 1; i >= 0; i-- {
+			if maxMerge >= palette[i].threshold {
+				lightCommand.Red2 = palette[i].red
+				lightCommand.Green2 = palette[i].green
+				lightCommand.Blue2 = palette[i].blue
+				break
+			}
 		}
 	}
 	if pullCount < 25 {
