@@ -104,6 +104,7 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 							Repository: repoShortName,
 							Section:    api.ReportTupleSectionMerge,
 							Age:        age(pr.Created, pr.Updated),
+							Reference:  pr.URL,
 						},
 					}
 					reportIssues = append(reportIssues, anItem)
@@ -135,6 +136,7 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 							Repository: repoShortName,
 							Section:    api.ReportTupleSectionReview,
 							Age:        age(pr.Created, pr.Updated),
+							Reference:  pr.URL,
 						},
 					}
 					reportIssues = append(reportIssues, anItem)

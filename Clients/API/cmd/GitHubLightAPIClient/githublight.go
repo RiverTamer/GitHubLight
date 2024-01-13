@@ -66,6 +66,7 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 					Repository: repository(issue.RepositoryURL),
 					Section:    api.ReportTupleSectionReview,
 					Age:        age(issue.CreatedAt),
+					Reference:  *issue.RepositoryURL,
 				},
 			})
 	}
@@ -84,6 +85,7 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 					Repository: repository(issue.RepositoryURL),
 					Section:    api.ReportTupleSectionMerge,
 					Age:        age(issue.UpdatedAt),
+					Reference:  *issue.RepositoryURL,
 				},
 			})
 	}

@@ -61,6 +61,7 @@ func main() {
 
 func processFolder(path string) []api.ReportsItem {
 	log.Printf("Scanning %s", path)
+	hostName, _ := os.Hostname()
 	pullReports := make([]api.ReportsItem, 0)
 	cmd := exec.Command("git", "fetch")
 	cmd.Dir = path
@@ -97,10 +98,11 @@ func processFolder(path string) []api.ReportsItem {
 			anItem := api.ReportsItem{
 				Type: api.ReportTupleReportsItem,
 				ReportTuple: api.ReportTuple{
-					Owner:      branchName,
-					Repository: path,
+					Owner:      "",
+					Repository: "",
 					Section:    api.ReportTupleSectionPull,
 					Age:        commitsToMerge,
+					Reference:  hostName + ":" + path,
 				},
 			}
 			pullReports = append(pullReports, anItem)
