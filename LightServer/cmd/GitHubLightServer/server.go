@@ -61,7 +61,13 @@ func (s *apiService) ResetGet(_ context.Context) (*api.Result, error) {
 }
 
 func (s *apiService) StatusGet(_ context.Context) (*api.Status, error) {
-	return &api.Status{}, nil
+	status := api.Status{
+		Reports: make([]api.ReportsItem, 0),
+	}
+	for _, report := range s.clientReports {
+		status.Reports = append(status.Reports, report.Reports...)
+	}
+	return &status, nil
 }
 
 func (s *apiService) ReportPost(_ context.Context, req *api.ClientReport) (*api.Result, error) {
