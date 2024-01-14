@@ -82,7 +82,7 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 		prListCommand := exec.Command("gh", "pr", "list", "-R", repoName, "-S", "is:open is:pr", "--json", "author,comments,createdAt,isDraft,mergeStateStatus,reviewDecision,reviewRequests,reviews,state,updatedAt,url")
 		output, err := prListCommand.CombinedOutput()
 		if err != nil {
-			log.Printf("Unable to fetch repo %s  (%v)\n", repoName, err)
+			log.Printf("Unable to fetch repo %s  %s (%v)\n", repoName, output, err)
 			continue
 		}
 		res := make(PullRequestList, 0)
