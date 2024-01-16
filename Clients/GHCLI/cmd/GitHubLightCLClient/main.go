@@ -112,6 +112,9 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 					continue
 				}
 			} else {
+				if pr.Author.Login == settings.CommandLineClient.Username {
+					continue
+				}
 				commentMade := false
 				for _, review := range pr.Reviews {
 					if review.Author.Login == settings.CommandLineClient.Username {
