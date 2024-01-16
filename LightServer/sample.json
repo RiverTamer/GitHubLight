@@ -1,20 +1,27 @@
-[
 {
-  "owner": "KarlKraft",
-  "repository": "GitHubLight",
-  "section": "review",
-  "age": 1
-},
-{
-  "owner": "KarlKraft",
-  "repository": "GitHubLight",
-  "section": "merge",
-  "age": 40000
-},
-{
-  "owner": "KarlKraft",
-  "repository": "GitHubLight",
-  "section": "pull",
-  "age": 0
+  "clientid": "test",
+  "reports": [
+    {
+      "owner": "string",
+      "repository": "string",
+      "section": "review",
+      "age": 100000,
+      "reference": "URL to PR"
+    },
+    {
+      "owner": "string",
+      "repository": "string",
+      "section": "merge",
+      "age": 10,
+      "reference": "URL to PR"
+    },
+    {
+      "owner": "string",
+      "repository": "string",
+      "section": "pull",
+      "age": 10,
+      "reference": "URL to PR"
+    }
+  ]
 }
-]
+
