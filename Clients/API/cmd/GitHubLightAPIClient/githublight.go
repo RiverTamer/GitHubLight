@@ -31,7 +31,7 @@ func main() {
 		clientReport := githubScan(settings)
 		_, err = client.ReportPost(context.Background(), &clientReport)
 		if err != nil {
-			log.Fatalf("%v", err)
+			log.Println("Unable to scan %v", err)
 		}
 		time.Sleep(time.Minute * 5)
 	}
