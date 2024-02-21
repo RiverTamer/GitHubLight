@@ -1,0 +1,27 @@
+---
+name: macOS build
+
+on:                          # yamllint disable-line rule:truthy
+  schedule:
+    - cron: '05 42 * * 6'
+  workflow_dispatch:
+
+  push:
+
+
+jobs:
+
+  build:
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        working-directory: ./SoftLight
+        run: $HOME/github/bin/build_mac_app.sh
