@@ -79,6 +79,43 @@ func (s *ErrorStatusCode) SetResponse(val Error) {
 	s.Response = val
 }
 
+// Ref: #/components/schemas/LightColor
+type LightColor struct {
+	ReviewRGB string `json:"reviewRGB"`
+	MergeRGB  string `json:"mergeRGB"`
+	PullRGB   string `json:"pullRGB"`
+}
+
+// GetReviewRGB returns the value of ReviewRGB.
+func (s *LightColor) GetReviewRGB() string {
+	return s.ReviewRGB
+}
+
+// GetMergeRGB returns the value of MergeRGB.
+func (s *LightColor) GetMergeRGB() string {
+	return s.MergeRGB
+}
+
+// GetPullRGB returns the value of PullRGB.
+func (s *LightColor) GetPullRGB() string {
+	return s.PullRGB
+}
+
+// SetReviewRGB sets the value of ReviewRGB.
+func (s *LightColor) SetReviewRGB(val string) {
+	s.ReviewRGB = val
+}
+
+// SetMergeRGB sets the value of MergeRGB.
+func (s *LightColor) SetMergeRGB(val string) {
+	s.MergeRGB = val
+}
+
+// SetPullRGB sets the value of PullRGB.
+func (s *LightColor) SetPullRGB(val string) {
+	s.PullRGB = val
+}
+
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
