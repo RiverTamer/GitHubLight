@@ -98,11 +98,11 @@ func processFolder(path string) []api.ReportsItem {
 			anItem := api.ReportsItem{
 				Type: api.ReportTupleReportsItem,
 				ReportTuple: api.ReportTuple{
-					Owner:      "",
-					Repository: "",
+					Owner:      hostName,
+					Repository: path,
 					Section:    api.ReportTupleSectionPull,
 					Age:        commitsToMerge,
-					Reference:  hostName + ":" + path + "branch: " + branchName,
+					Reference:  branchName,
 				},
 			}
 			pullReports = append(pullReports, anItem)
