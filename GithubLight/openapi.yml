@@ -1,0 +1,168 @@
+---
+openapi: 3.0.0
+info:
+  title: Github Light Client/Server API
+  # yamllint disable-line rule:line-length
+  description: Used by clients to notify the GitHubLightServer of the current status for PRs requiring reviews or merge, and local branches requiring pulls
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:8080
+    description: Local Machine
+  - url: https://ghls.karlkraft.com
+    description: Production Server
+
+components:
+
+  schemas:
+    Status:
+      type: object
+      properties:
+        reports:
+          $ref: "#/components/schemas/Reports"
+
+    # colors are in the form #RRGGBB
+    LightColor:
+      required:
+        - reviewRGB
+        - mergeRGB
+        - pullRGB
+      type: object
+      properties:
+        reviewRGB:
+          type: string
+        mergeRGB:
+          type: string
+        pullRGB:
+          type: string
+
+    ReportTuple:
+      required:
+        - owner
+        - repository
+        - section
+        - age
+        - reference
+      type: object
+      properties:
+        owner:
+          type: string
+        repository:
+          type: string
+        section:
+          type: string
+          enum: [review, merge, pull]
+        age:
+          type: integer
+        reference:
+          type: string
+
+
+    Reports:
+      type: array
+      items:
+        anyOf:
+          - $ref: "#/components/schemas/ReportTuple"
+
+    ClientReport:
+      required:
+        - clientid
+        - reports
+      type: object
+      properties:
+        clientid:
+          type: string
+        reports:
+          $ref: "#/components/schemas/Reports"
+
+    Result:
+      type: object
+      properties:
+        summary:
+          type: string
+
+
+    Error:
+      type: object
+      properties:
+        summary:
+          type: string
+
+paths:
+
+  /lights:
+    get:
+      summary: Returns current lights for software implementations
+      responses:
+        '200':
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LightColor"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /status:
+    get:
+      summary: Returns current status
+      responses:
+        '200':
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        default:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /reset:
+    get:
+      summary: Resets the system
+      responses:
+        '200':
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+        default:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+  /report:
+    post:
+      summary: Reports the current status for monitored tuple
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientReport"
+
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+        default:
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
