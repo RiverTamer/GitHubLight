@@ -48,6 +48,26 @@ var palette = [9]colorLevels{
 	{threshold: 3600 * 7, red: 0x80, green: 0, blue: 0},
 }
 
+var lastColorCommand = arduino.LightCommand{
+	Red1:   0x33,
+	Green1: 0x33,
+	Blue1:  0x33,
+	Red2:   0x33,
+	Green2: 0x33,
+	Blue2:  0x33,
+	Red3:   0x33,
+	Green3: 0x33,
+	Blue3:  0x33,
+}
+
+func (s *apiService) LightsGet(_ context.Context) (*api.LightColor, error) {
+	return &api.LightColor{
+		ReviewRGB: fmt.Sprintf("#%02x%02x%02x", lastColorCommand.Red1, lastColorCommand.Green1, lastColorCommand.Blue1),
+		MergeRGB:  fmt.Sprintf("#%02x%02x%02x", lastColorCommand.Red2, lastColorCommand.Green2, lastColorCommand.Blue2),
+		PullRGB:   fmt.Sprintf("#%02x%02x%02x", lastColorCommand.Red3, lastColorCommand.Green3, lastColorCommand.Blue3),
+	}, nil
+}
+
 func (s *apiService) ResetGet(_ context.Context) (*api.Result, error) {
 	clear(s.clientReports)
 	updateLights(s)
@@ -149,6 +169,7 @@ func updateLights(s *apiService) {
 	} else {
 		lightCommand.Red3 = 0xff
 	}
+	lastColorCommand = lightCommand
 	lightCommand.Send(s.arduinoPort)
 
 }
@@ -194,7 +215,7 @@ func main() {
 		g1 := rand.Intn(len(palette))
 		g2 := rand.Intn(len(palette))
 		g3 := rand.Intn(len(palette))
-		arduino.LightCommand{
+		lastColorCommand = arduino.LightCommand{
 			Red1:   palette[g1].red,
 			Green1: palette[g1].green,
 			Blue1:  palette[g1].blue,
@@ -204,10 +225,11 @@ func main() {
 			Red3:   palette[g3].red,
 			Green3: palette[g3].green,
 			Blue3:  palette[g3].blue,
-		}.Send(service.arduinoPort)
+		}
+		lastColorCommand.Send(service.arduinoPort)
 		time.Sleep(500 * time.Millisecond)
 	}
-	arduino.LightCommand{
+	lastColorCommand = arduino.LightCommand{
 		Red1:   0,
 		Green1: 0,
 		Blue1:  0,
@@ -217,7 +239,8 @@ func main() {
 		Red3:   0,
 		Green3: 0,
 		Blue3:  0,
-	}.Send(service.arduinoPort)
+	}
+	lastColorCommand.Send(service.arduinoPort)
 
 	srv, err := api.NewServer(service)
 	if err != nil {

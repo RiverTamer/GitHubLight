@@ -21,6 +21,21 @@ components:
         reports:
           $ref: "#/components/schemas/Reports"
 
+    # colors are in the form #RRGGBB
+    LightColor:
+      required:
+        - reviewRGB
+        - mergeRGB
+        - pullRGB
+      type: object
+      properties:
+        reviewRGB:
+          type: string
+        mergeRGB:
+          type: string
+        pullRGB:
+          type: string
+
     ReportTuple:
       required:
         - owner
@@ -41,6 +56,7 @@ components:
           type: integer
         reference:
           type: string
+
 
     Reports:
       type: array
@@ -73,6 +89,24 @@ components:
           type: string
 
 paths:
+
+  /lights:
+    get:
+      summary: Returns current lights for software implementations
+      responses:
+        '200':
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LightColor"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /status:
     get:
       summary: Returns current status
