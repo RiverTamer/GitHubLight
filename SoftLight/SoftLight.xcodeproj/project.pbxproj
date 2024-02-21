@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB3404072B85B08200A8E571 /* Toml in Frameworks */ = {isa = PBXBuildFile; productRef = CB3404062B85B08200A8E571 /* Toml */; };
 		CBFE2B542B857D8F00EA6838 /* SoftLightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B532B857D8F00EA6838 /* SoftLightApp.swift */; };
 		CBFE2B562B857D8F00EA6838 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B552B857D8F00EA6838 /* ContentView.swift */; };
 		CBFE2B582B857D9000EA6838 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B572B857D9000EA6838 /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 				CBFE2B642B858B5600EA6838 /* _OpenAPIGeneratorCore in Frameworks */,
 				CBFE2B692B858B6200EA6838 /* OpenAPIRuntime in Frameworks */,
 				CBFE2B662B858B5600EA6838 /* swift-openapi-generator in Frameworks */,
+				CB3404072B85B08200A8E571 /* Toml in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +110,7 @@
 				CBFE2B652B858B5600EA6838 /* swift-openapi-generator */,
 				CBFE2B682B858B6200EA6838 /* OpenAPIRuntime */,
 				CBFE2B6B2B858B6F00EA6838 /* OpenAPIURLSession */,
+				CB3404062B85B08200A8E571 /* Toml */,
 			);
 			productName = GithubLight;
 			productReference = CBFE2B502B857D8F00EA6838 /* SoftLight.app */;
@@ -141,6 +144,7 @@
 				CBFE2B622B858B5600EA6838 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */,
 				CBFE2B672B858B6200EA6838 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */,
 				CBFE2B6A2B858B6F00EA6838 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */,
+				CB3404052B85B08200A8E571 /* XCRemoteSwiftPackageReference "swift-toml" */,
 			);
 			productRefGroup = CBFE2B512B857D8F00EA6838 /* Products */;
 			projectDirPath = "";
@@ -382,6 +386,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CB3404052B85B08200A8E571 /* XCRemoteSwiftPackageReference "swift-toml" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jdfergason/swift-toml";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		CBFE2B622B858B5600EA6838 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-openapi-generator.git";
@@ -409,6 +421,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CB3404062B85B08200A8E571 /* Toml */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB3404052B85B08200A8E571 /* XCRemoteSwiftPackageReference "swift-toml" */;
+			productName = Toml;
+		};
 		CBFE2B632B858B5600EA6838 /* _OpenAPIGeneratorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CBFE2B622B858B5600EA6838 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;

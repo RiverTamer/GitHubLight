@@ -9,6 +9,7 @@
 import OpenAPIRuntime
 import OpenAPIURLSession
 import SwiftUI
+import Toml
 
 struct Report: Identifiable {
   let id = UUID()
@@ -50,7 +51,7 @@ struct ContentView: View {
       Spacer()
       Table(reports) {
         TableColumn("Owner", value: \.owner)
-        TableColumn("Repositry", value: \.repository)
+        TableColumn("Repo", value: \.repository)
         TableColumn("Section", value: \.section)
         TableColumn("Age") { _ in
           Text("1")
@@ -65,7 +66,15 @@ struct ContentView: View {
 
   let client: Client
   init() {
-    client = Client(serverURL: try! Servers.server2(), transport: URLSessionTransport())
+    let configPath = NSHomeDirectory() + "/.githubLightBox"
+    if FileManager.default.fileExists(atPath: configPath) {
+      let config = try! Toml(contentsOfFile: configPath)
+      let url = Foundation.URL(string: config.string("LightServer")!)
+
+      client = Client(serverURL: url!, transport: URLSessionTransport())
+    } else {
+      client = Client(serverURL: try! Servers.server1(), transport: URLSessionTransport())
+    }
   }
 
   func refreshLights() async throws {
