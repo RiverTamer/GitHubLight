@@ -65,7 +65,7 @@ struct ContentView: View {
 
   let client: Client
   init() {
-    client = Client(serverURL: try! Servers.server1(), transport: URLSessionTransport())
+    client = Client(serverURL: try! Servers.server2(), transport: URLSessionTransport())
   }
 
   func refreshLights() async throws {
