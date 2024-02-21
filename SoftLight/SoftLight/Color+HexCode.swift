@@ -1,6 +1,6 @@
 //
 //  Color+HexCode.swift
-//  GithubLight
+//  SoftLight
 //
 //  Created by Karl Kraft on 2/20/24.
 //  Copyright 2024 Karl Kraft. All rights reserved.
