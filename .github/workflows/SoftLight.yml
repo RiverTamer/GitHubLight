@@ -3,7 +3,7 @@ name: macOS build
 
 on:                          # yamllint disable-line rule:truthy
   schedule:
-    - cron: '05 42 * * 6'
+    - cron: '05 12 * * 6'
   workflow_dispatch:
 
   push:
