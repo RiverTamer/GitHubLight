@@ -104,7 +104,7 @@ struct ContentView: View {
             reports.removeAll()
             if let responseReports = json.reports {
               for r in responseReports {
-                var myReport = Report(owner: r.value1!.owner, repository: r.value1!.repository, section: r.value1!.section.rawValue, age: r.value1!.age, reference: r.value1!.reference)
+                let myReport = Report(owner: r.value1!.owner, repository: r.value1!.repository, section: r.value1!.section.rawValue, age: r.value1!.age, reference: r.value1!.reference)
                 reports.append(myReport)
               }
             }

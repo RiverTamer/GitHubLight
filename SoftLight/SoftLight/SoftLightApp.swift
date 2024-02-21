@@ -1,5 +1,5 @@
 //
-//  GithubLightApp.swift
+//  SoftLightApp.swift
 //  SoftLight
 //
 //  Created by Karl Kraft on 2/20/24.
@@ -9,7 +9,7 @@
 import SwiftUI
 
 @main
-struct GithubLightApp: App {
+struct SoftLightApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CBFE2B542B857D8F00EA6838 /* GithubLightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B532B857D8F00EA6838 /* GithubLightApp.swift */; };
+		CBFE2B542B857D8F00EA6838 /* SoftLightApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B532B857D8F00EA6838 /* SoftLightApp.swift */; };
 		CBFE2B562B857D8F00EA6838 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B552B857D8F00EA6838 /* ContentView.swift */; };
 		CBFE2B582B857D9000EA6838 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B572B857D9000EA6838 /* Assets.xcassets */; };
 		CBFE2B5B2B857D9000EA6838 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B5A2B857D9000EA6838 /* Preview Assets.xcassets */; };
@@ -22,7 +22,7 @@
 
 /* Begin PBXFileReference section */
 		CBFE2B502B857D8F00EA6838 /* SoftLight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoftLight.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CBFE2B532B857D8F00EA6838 /* GithubLightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubLightApp.swift; sourceTree = "<group>"; };
+		CBFE2B532B857D8F00EA6838 /* SoftLightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftLightApp.swift; sourceTree = "<group>"; };
 		CBFE2B552B857D8F00EA6838 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CBFE2B572B857D9000EA6838 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CBFE2B5A2B857D9000EA6838 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -68,7 +68,7 @@
 		CBFE2B522B857D8F00EA6838 /* SoftLight */ = {
 			isa = PBXGroup;
 			children = (
-				CBFE2B532B857D8F00EA6838 /* GithubLightApp.swift */,
+				CBFE2B532B857D8F00EA6838 /* SoftLightApp.swift */,
 				CBFE2B552B857D8F00EA6838 /* ContentView.swift */,
 				CBFE2B572B857D9000EA6838 /* Assets.xcassets */,
 				CBFE2B5C2B857D9000EA6838 /* SoftLight.entitlements */,
@@ -171,7 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBFE2B562B857D8F00EA6838 /* ContentView.swift in Sources */,
-				CBFE2B542B857D8F00EA6838 /* GithubLightApp.swift in Sources */,
+				CBFE2B542B857D8F00EA6838 /* SoftLightApp.swift in Sources */,
 				CBFE2B7D2B858F9B00EA6838 /* Color+HexCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -313,7 +313,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"GithubLight/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"SoftLight/Preview Content\"";
 				DEVELOPMENT_TEAM = PW3LJSK7Z7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -340,7 +340,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"GithubLight/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"SoftLight/Preview Content\"";
 				DEVELOPMENT_TEAM = PW3LJSK7Z7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
