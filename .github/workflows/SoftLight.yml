@@ -5,8 +5,11 @@ on:                          # yamllint disable-line rule:truthy
   schedule:
     - cron: '05 12 * * 6'
   workflow_dispatch:
-
   push:
+
+env:
+  TARGET: SoftLight
+  CHANNEL_BASE: SoftLight
 
 
 jobs:
