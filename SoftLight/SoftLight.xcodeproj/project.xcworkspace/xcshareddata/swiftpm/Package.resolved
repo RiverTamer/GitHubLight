@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jdfergason/swift-toml",
       "state" : {
-        "branch" : "master",
-        "revision" : "f26573bd49534f68ac11c2f7467c1d50cdb2afce"
+        "revision" : "f4a3d9fbd94a855d6f85989c7e4c29e0ad75999c",
+        "version" : "1.0.0"
       }
     },
     {
