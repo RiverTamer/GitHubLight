@@ -14,7 +14,7 @@ env:
 
 jobs:
 
-  build:
+  "SoftLight":
     runs-on:
       - self-hosted
       - macOS

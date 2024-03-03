@@ -14,7 +14,7 @@ env:
 
 jobs:
 
-  "macOS":
+  "PullClient":
     runs-on:
       - self-hosted
       - macOS

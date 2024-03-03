@@ -14,7 +14,7 @@ env:
 
 jobs:
 
-  "macOS":
+  "APIClient":
     runs-on:
       - self-hosted
       - macOS

@@ -14,7 +14,7 @@ env:
 
 jobs:
 
-  "macOS":
+  "CLClient":
     runs-on:
       - self-hosted
       - macOS
