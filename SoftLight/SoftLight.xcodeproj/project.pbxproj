@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB7EB98D2B94F231002260AF /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7EB98C2B94F230002260AF /* Client.swift */; };
+		CB7EB98F2B951884002260AF /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7EB98E2B951884002260AF /* Types.swift */; };
 		CBBC46B92B94294100AB35E2 /* _OpenAPIGeneratorCore in Frameworks */ = {isa = PBXBuildFile; productRef = CBBC46B82B94294100AB35E2 /* _OpenAPIGeneratorCore */; };
 		CBBC46BB2B94294100AB35E2 /* OpenAPIRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = CBBC46BA2B94294100AB35E2 /* OpenAPIRuntime */; };
 		CBBC46BD2B94294100AB35E2 /* OpenAPIURLSession in Frameworks */ = {isa = PBXBuildFile; productRef = CBBC46BC2B94294100AB35E2 /* OpenAPIURLSession */; };
@@ -15,20 +17,18 @@
 		CBFE2B562B857D8F00EA6838 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B552B857D8F00EA6838 /* ContentView.swift */; };
 		CBFE2B582B857D9000EA6838 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B572B857D9000EA6838 /* Assets.xcassets */; };
 		CBFE2B5B2B857D9000EA6838 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B5A2B857D9000EA6838 /* Preview Assets.xcassets */; };
-		CBFE2B792B858CA600EA6838 /* openapi-generator-config.yml in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B772B858CA600EA6838 /* openapi-generator-config.yml */; };
-		CBFE2B7A2B858CA600EA6838 /* openapi.yml in Resources */ = {isa = PBXBuildFile; fileRef = CBFE2B782B858CA600EA6838 /* openapi.yml */; };
 		CBFE2B7D2B858F9B00EA6838 /* Color+HexCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBFE2B7C2B858F9B00EA6838 /* Color+HexCode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB7EB98C2B94F230002260AF /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		CB7EB98E2B951884002260AF /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		CBFE2B502B857D8F00EA6838 /* SoftLight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoftLight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBFE2B532B857D8F00EA6838 /* SoftLightApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftLightApp.swift; sourceTree = "<group>"; };
 		CBFE2B552B857D8F00EA6838 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CBFE2B572B857D9000EA6838 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CBFE2B5A2B857D9000EA6838 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CBFE2B5C2B857D9000EA6838 /* SoftLight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SoftLight.entitlements; sourceTree = "<group>"; };
-		CBFE2B772B858CA600EA6838 /* openapi-generator-config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = "openapi-generator-config.yml"; sourceTree = "<group>"; };
-		CBFE2B782B858CA600EA6838 /* openapi.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = openapi.yml; sourceTree = "<group>"; };
 		CBFE2B7C2B858F9B00EA6838 /* Color+HexCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+HexCode.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,8 +57,6 @@
 		CBFE2B472B857D8F00EA6838 = {
 			isa = PBXGroup;
 			children = (
-				CBFE2B772B858CA600EA6838 /* openapi-generator-config.yml */,
-				CBFE2B782B858CA600EA6838 /* openapi.yml */,
 				CBFE2B522B857D8F00EA6838 /* SoftLight */,
 				CBFE2B512B857D8F00EA6838 /* Products */,
 				CBBC46B72B94294100AB35E2 /* Frameworks */,
@@ -76,6 +74,8 @@
 		CBFE2B522B857D8F00EA6838 /* SoftLight */ = {
 			isa = PBXGroup;
 			children = (
+				CB7EB98E2B951884002260AF /* Types.swift */,
+				CB7EB98C2B94F230002260AF /* Client.swift */,
 				CBFE2B532B857D8F00EA6838 /* SoftLightApp.swift */,
 				CBFE2B552B857D8F00EA6838 /* ContentView.swift */,
 				CBFE2B572B857D9000EA6838 /* Assets.xcassets */,
@@ -108,7 +108,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CBBC46B32B9428DC00AB35E2 /* PBXTargetDependency */,
 			);
 			name = SoftLight;
 			packageProductDependencies = (
@@ -166,9 +165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBFE2B5B2B857D9000EA6838 /* Preview Assets.xcassets in Resources */,
-				CBFE2B792B858CA600EA6838 /* openapi-generator-config.yml in Resources */,
 				CBFE2B582B857D9000EA6838 /* Assets.xcassets in Resources */,
-				CBFE2B7A2B858CA600EA6838 /* openapi.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,18 +178,13 @@
 			files = (
 				CBFE2B562B857D8F00EA6838 /* ContentView.swift in Sources */,
 				CBFE2B542B857D8F00EA6838 /* SoftLightApp.swift in Sources */,
+				CB7EB98D2B94F231002260AF /* Client.swift in Sources */,
+				CB7EB98F2B951884002260AF /* Types.swift in Sources */,
 				CBFE2B7D2B858F9B00EA6838 /* Color+HexCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		CBBC46B32B9428DC00AB35E2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = CBBC46B22B9428DC00AB35E2 /* OpenAPIGenerator */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CBFE2B5D2B857D9000EA6838 /* Debug */ = {
@@ -426,11 +418,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CBBC46B22B9428DC00AB35E2 /* OpenAPIGenerator */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CBBC46AE2B9428A600AB35E2 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
-			productName = "plugin:OpenAPIGenerator";
-		};
 		CBBC46B82B94294100AB35E2 /* _OpenAPIGeneratorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CBBC46AE2B9428A600AB35E2 /* XCRemoteSwiftPackageReference "swift-openapi-generator" */;
