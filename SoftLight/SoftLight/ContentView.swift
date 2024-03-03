@@ -53,8 +53,8 @@ struct ContentView: View {
         TableColumn("Owner", value: \.owner)
         TableColumn("Repo", value: \.repository)
         TableColumn("Section", value: \.section)
-        TableColumn("Age") { _ in
-          Text("1")
+        TableColumn("Age") { r in
+          Text("\(r.age)")
         }
         TableColumn("Ref", value: \.reference)
       }
