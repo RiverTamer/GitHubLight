@@ -20,8 +20,6 @@ struct Report: Identifiable {
   let reference: String
 }
 
-// todo -refresh
-// todo - fetch data and display
 // todo - reset button
 
 struct ContentView: View {
@@ -29,6 +27,8 @@ struct ContentView: View {
   @State var reviewColor = Color.gray
   @State var pullColor = Color.gray
   @State var reports = [Report]()
+
+  @State var refreshTime: Date?
 
   var body: some View {
     HStack {
@@ -40,14 +40,30 @@ struct ContentView: View {
         }.font(.system(size: 48.0)).fontWeight(.heavy)
 
         Spacer()
-        Button {
-          Task { try? await refreshLights() }
-          Task { try? await refreshReports() }
-        } label: {
-          Text("Refresh")
+        Group {
+          HStack {
+            Button {
+              Task { try? await refreshLights() }
+              Task { try? await refreshReports() }
+            } label: {
+              Text("Refresh")
+            }
+            if let refreshTime {
+              Text(refreshTime, style: .time)
+            } else {
+              Text("....")
+            }
+            Spacer()
+            Button {
+              Task { try? await reset() }
+            } label: {
+              Text("Reset")
+            }
+          }
         }
       }
       .padding()
+      .frame(maxWidth: 320)
       Spacer()
       Table(reports) {
         TableColumn("Owner", value: \.owner)
@@ -77,6 +93,12 @@ struct ContentView: View {
     }
   }
 
+  func reset() async throws {
+    _ = try await client.get_sol_reset()
+    try await refreshLights()
+    try await refreshReports()
+  }
+
   func refreshLights() async throws {
     let response = try await client.get_sol_lights()
     switch response {
@@ -98,6 +120,7 @@ struct ContentView: View {
             } else {
               pullColor = Color(hex: json.pullRGB)
             }
+            refreshTime = Date()
         }
       case let .default(statusCode: statusCode, _):
         print("Could not get lights \(statusCode)")
@@ -117,6 +140,7 @@ struct ContentView: View {
                 reports.append(myReport)
               }
             }
+            refreshTime = Date()
         }
       case let .default(statusCode: statusCode, _):
         print("Could not get get_sol_status \(statusCode)")
