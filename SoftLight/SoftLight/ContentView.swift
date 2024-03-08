@@ -13,11 +13,11 @@ import Toml
 
 struct Report: Identifiable {
   let id = UUID()
-  let owner: String
   let repository: String
   let section: String
   let age: Int
-  let reference: String
+  let url: String
+  let notes: String
 }
 
 // todo - reset button
@@ -31,53 +31,59 @@ struct ContentView: View {
   @State var refreshTime: Date?
 
   var body: some View {
-    HStack {
-      VStack {
-        Group {
-          Text("REVIEW").foregroundStyle(reviewColor)
-          Text("MERGE").foregroundStyle(mergeColor)
-          Text("PULL").foregroundStyle(pullColor)
-        }.font(.system(size: 48.0)).fontWeight(.heavy)
-
-        Spacer()
-        Group {
-          HStack {
-            Button {
-              Task { try? await refreshLights() }
-              Task { try? await refreshReports() }
-            } label: {
-              Text("Refresh")
+    VStack {
+      List {
+        ForEach(reports) { report in
+          if report.section == "review" {
+            HStack {
+              Text("Review:")
+              Link(report.notes, destination: URL(string: report.url)!)
             }
-            if let refreshTime {
-              Text(refreshTime, style: .time)
-            } else {
-              Text("....")
+          } else if report.section == "merge" {
+            HStack {
+              Text("Merge:")
+              Link(report.notes, destination: URL(string: report.url)!)
             }
-            Spacer()
-            Button {
-              Task { try? await reset() }
-            } label: {
-              Text("Reset")
-            }
+          } else if report.section == "pull" {
+            Text("Pull:")
           }
         }
       }
-      .padding()
-      .frame(maxWidth: 320)
+      Group {
+        Text("REVIEW").foregroundStyle(reviewColor)
+        Text("MERGE").foregroundStyle(mergeColor)
+        Text("PULL").foregroundStyle(pullColor)
+      }.font(.system(size: 48.0)).fontWeight(.heavy)
+
       Spacer()
-      Table(reports) {
-        TableColumn("Owner", value: \.owner)
-        TableColumn("Repo", value: \.repository)
-        TableColumn("Section", value: \.section)
-        TableColumn("Age") { r in
-          Text("\(r.age)")
+
+      Group {
+        HStack {
+          Button {
+            Task { try? await refreshLights() }
+            Task { try? await refreshReports() }
+          } label: {
+            Text("Refresh")
+          }
+          if let refreshTime {
+            Text(refreshTime, style: .time)
+          } else {
+            Text("....")
+          }
+          Spacer()
+          Button {
+            Task { try? await reset() }
+          } label: {
+            Text("Reset")
+          }
         }
-        TableColumn("Ref", value: \.reference)
       }
-    }.onAppear {
+    }
+    .padding()
+    .onAppear {
       Task { try? await refreshLights() }
       Task { try? await refreshReports() }
-    }
+    }.frame(minWidth: 320, maxWidth: 400)
   }
 
   let client: Client
@@ -136,7 +142,7 @@ struct ContentView: View {
             reports.removeAll()
             if let responseReports = json.reports {
               for r in responseReports {
-                let myReport = Report(owner: r.value1!.owner, repository: r.value1!.repository, section: r.value1!.section.rawValue, age: r.value1!.age, reference: r.value1!.reference)
+                let myReport = Report(repository: r.value1!.repository, section: r.value1!.section.rawValue, age: r.value1!.age, url: r.value1!.url, notes: r.value1!.notes)
                 reports.append(myReport)
               }
             }

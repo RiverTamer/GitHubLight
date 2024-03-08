@@ -33,6 +33,7 @@ type PullRequest struct {
 	Requests       []ReviewRequests `json:"reviewRequests"`
 	Reviews        []Review         `json:"reviews"`
 	URL            string           `json:"url"`
+	Title          string           `json:"title"`
 }
 
 type Review struct {
@@ -79,7 +80,7 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 		owner := repoComponents[0]
 		repoShortName := repoComponents[1]
 
-		prListCommand := exec.Command("gh", "pr", "list", "-R", repoName, "-S", "is:open is:pr", "--json", "author,comments,createdAt,isDraft,mergeStateStatus,reviewDecision,reviewRequests,reviews,state,updatedAt,url")
+		prListCommand := exec.Command("gh", "pr", "list", "-R", repoName, "-S", "is:open is:pr", "--json", "author,comments,createdAt,isDraft,mergeStateStatus,reviewDecision,reviewRequests,reviews,state,updatedAt,url,title")
 		output, err := prListCommand.CombinedOutput()
 		if err != nil {
 			log.Printf("Unable to fetch repo %s  %s (%v)\n", repoName, output, err)
@@ -100,11 +101,11 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 					anItem := api.ReportsItem{
 						Type: api.ReportTupleReportsItem,
 						ReportTuple: api.ReportTuple{
-							Owner:      owner,
-							Repository: repoShortName,
+							Repository: owner + "/" + repoShortName,
 							Section:    api.ReportTupleSectionMerge,
 							Age:        age(pr.Created, pr.Updated),
-							Reference:  pr.URL,
+							URL:        pr.URL,
+							Notes:      pr.Title,
 						},
 					}
 					reportIssues = append(reportIssues, anItem)
@@ -135,11 +136,11 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 					anItem := api.ReportsItem{
 						Type: api.ReportTupleReportsItem,
 						ReportTuple: api.ReportTuple{
-							Owner:      owner,
-							Repository: repoShortName,
+							Repository: owner + "/" + repoShortName,
 							Section:    api.ReportTupleSectionReview,
 							Age:        age(pr.Created, pr.Updated),
-							Reference:  pr.URL,
+							URL:        pr.URL,
+							Notes:      pr.Title,
 						},
 					}
 					reportIssues = append(reportIssues, anItem)

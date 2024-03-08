@@ -62,11 +62,11 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 			api.ReportsItem{
 				Type: api.ReportTupleReportsItem,
 				ReportTuple: api.ReportTuple{
-					Owner:      owner(issue.RepositoryURL),
-					Repository: repository(issue.RepositoryURL),
+					Repository: owner(issue.RepositoryURL) + "/" + repository(issue.RepositoryURL),
 					Section:    api.ReportTupleSectionReview,
 					Age:        age(issue.CreatedAt),
-					Reference:  *issue.RepositoryURL,
+					URL:        *issue.HTMLURL,
+					Notes:      *issue.Title,
 				},
 			})
 	}
@@ -81,11 +81,11 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 			api.ReportsItem{
 				Type: api.ReportTupleReportsItem,
 				ReportTuple: api.ReportTuple{
-					Owner:      owner(issue.RepositoryURL),
-					Repository: repository(issue.RepositoryURL),
+					Repository: owner(issue.RepositoryURL) + "/" + repository(issue.RepositoryURL),
 					Section:    api.ReportTupleSectionMerge,
 					Age:        age(issue.UpdatedAt),
-					Reference:  *issue.RepositoryURL,
+					URL:        *issue.HTMLURL,
+					Notes:      *issue.Title,
 				},
 			})
 	}
