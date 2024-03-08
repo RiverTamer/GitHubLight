@@ -8,6 +8,12 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// LightsGet implements GET /lights operation.
+	//
+	// Returns current lights for software implementations.
+	//
+	// GET /lights
+	LightsGet(ctx context.Context) (*LightColor, error)
 	// ReportPost implements POST /report operation.
 	//
 	// Reports the current status for monitored tuple.

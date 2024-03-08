@@ -13,6 +13,15 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// LightsGet implements GET /lights operation.
+//
+// Returns current lights for software implementations.
+//
+// GET /lights
+func (UnimplementedHandler) LightsGet(ctx context.Context) (r *LightColor, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ReportPost implements POST /report operation.
 //
 // Reports the current status for monitored tuple.

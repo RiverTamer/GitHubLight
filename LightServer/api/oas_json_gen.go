@@ -363,10 +363,6 @@ func (s *ReportTuple) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *ReportTuple) encodeFields(e *jx.Encoder) {
 	{
-		e.FieldStart("owner")
-		e.Str(s.Owner)
-	}
-	{
 		e.FieldStart("repository")
 		e.Str(s.Repository)
 	}
@@ -379,17 +375,21 @@ func (s *ReportTuple) encodeFields(e *jx.Encoder) {
 		e.Int(s.Age)
 	}
 	{
-		e.FieldStart("reference")
-		e.Str(s.Reference)
+		e.FieldStart("url")
+		e.Str(s.URL)
+	}
+	{
+		e.FieldStart("notes")
+		e.Str(s.Notes)
 	}
 }
 
 var jsonFieldsNameOfReportTuple = [5]string{
-	0: "owner",
-	1: "repository",
-	2: "section",
-	3: "age",
-	4: "reference",
+	0: "repository",
+	1: "section",
+	2: "age",
+	3: "url",
+	4: "notes",
 }
 
 // Decode decodes ReportTuple from json.
@@ -401,20 +401,8 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "owner":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.Owner = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"owner\"")
-			}
 		case "repository":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.Repository = string(v)
@@ -426,7 +414,7 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"repository\"")
 			}
 		case "section":
-			requiredBitSet[0] |= 1 << 2
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
 				if err := s.Section.Decode(d); err != nil {
 					return err
@@ -436,7 +424,7 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"section\"")
 			}
 		case "age":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Int()
 				s.Age = int(v)
@@ -447,17 +435,29 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"age\"")
 			}
-		case "reference":
-			requiredBitSet[0] |= 1 << 4
+		case "url":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
-				s.Reference = string(v)
+				s.URL = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"reference\"")
+				return errors.Wrap(err, "decode field \"url\"")
+			}
+		case "notes":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.Notes = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"notes\"")
 			}
 		default:
 			return d.Skip()

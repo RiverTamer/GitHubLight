@@ -38,15 +38,13 @@ components:
 
     ReportTuple:
       required:
-        - owner
         - repository
         - section
         - age
-        - reference
+        - url
+        - notes
       type: object
       properties:
-        owner:
-          type: string
         repository:
           type: string
         section:
@@ -54,7 +52,9 @@ components:
           enum: [review, merge, pull]
         age:
           type: integer
-        reference:
+        url:
+          type: string
+        notes:
           type: string
 
 

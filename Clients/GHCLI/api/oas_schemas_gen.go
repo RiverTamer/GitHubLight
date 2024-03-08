@@ -79,6 +79,43 @@ func (s *ErrorStatusCode) SetResponse(val Error) {
 	s.Response = val
 }
 
+// Ref: #/components/schemas/LightColor
+type LightColor struct {
+	ReviewRGB string `json:"reviewRGB"`
+	MergeRGB  string `json:"mergeRGB"`
+	PullRGB   string `json:"pullRGB"`
+}
+
+// GetReviewRGB returns the value of ReviewRGB.
+func (s *LightColor) GetReviewRGB() string {
+	return s.ReviewRGB
+}
+
+// GetMergeRGB returns the value of MergeRGB.
+func (s *LightColor) GetMergeRGB() string {
+	return s.MergeRGB
+}
+
+// GetPullRGB returns the value of PullRGB.
+func (s *LightColor) GetPullRGB() string {
+	return s.PullRGB
+}
+
+// SetReviewRGB sets the value of ReviewRGB.
+func (s *LightColor) SetReviewRGB(val string) {
+	s.ReviewRGB = val
+}
+
+// SetMergeRGB sets the value of MergeRGB.
+func (s *LightColor) SetMergeRGB(val string) {
+	s.MergeRGB = val
+}
+
+// SetPullRGB sets the value of PullRGB.
+func (s *LightColor) SetPullRGB(val string) {
+	s.PullRGB = val
+}
+
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -127,16 +164,11 @@ func (o OptString) Or(d string) string {
 
 // Ref: #/components/schemas/ReportTuple
 type ReportTuple struct {
-	Owner      string             `json:"owner"`
 	Repository string             `json:"repository"`
 	Section    ReportTupleSection `json:"section"`
 	Age        int                `json:"age"`
-	Reference  string             `json:"reference"`
-}
-
-// GetOwner returns the value of Owner.
-func (s *ReportTuple) GetOwner() string {
-	return s.Owner
+	URL        string             `json:"url"`
+	Notes      string             `json:"notes"`
 }
 
 // GetRepository returns the value of Repository.
@@ -154,14 +186,14 @@ func (s *ReportTuple) GetAge() int {
 	return s.Age
 }
 
-// GetReference returns the value of Reference.
-func (s *ReportTuple) GetReference() string {
-	return s.Reference
+// GetURL returns the value of URL.
+func (s *ReportTuple) GetURL() string {
+	return s.URL
 }
 
-// SetOwner sets the value of Owner.
-func (s *ReportTuple) SetOwner(val string) {
-	s.Owner = val
+// GetNotes returns the value of Notes.
+func (s *ReportTuple) GetNotes() string {
+	return s.Notes
 }
 
 // SetRepository sets the value of Repository.
@@ -179,9 +211,14 @@ func (s *ReportTuple) SetAge(val int) {
 	s.Age = val
 }
 
-// SetReference sets the value of Reference.
-func (s *ReportTuple) SetReference(val string) {
-	s.Reference = val
+// SetURL sets the value of URL.
+func (s *ReportTuple) SetURL(val string) {
+	s.URL = val
+}
+
+// SetNotes sets the value of Notes.
+func (s *ReportTuple) SetNotes(val string) {
+	s.Notes = val
 }
 
 type ReportTupleSection string

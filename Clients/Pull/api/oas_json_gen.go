@@ -188,6 +188,136 @@ func (s *Error) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode implements json.Marshaler.
+func (s *LightColor) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *LightColor) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("reviewRGB")
+		e.Str(s.ReviewRGB)
+	}
+	{
+		e.FieldStart("mergeRGB")
+		e.Str(s.MergeRGB)
+	}
+	{
+		e.FieldStart("pullRGB")
+		e.Str(s.PullRGB)
+	}
+}
+
+var jsonFieldsNameOfLightColor = [3]string{
+	0: "reviewRGB",
+	1: "mergeRGB",
+	2: "pullRGB",
+}
+
+// Decode decodes LightColor from json.
+func (s *LightColor) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode LightColor to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "reviewRGB":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ReviewRGB = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"reviewRGB\"")
+			}
+		case "mergeRGB":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.MergeRGB = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mergeRGB\"")
+			}
+		case "pullRGB":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.PullRGB = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"pullRGB\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode LightColor")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfLightColor) {
+					name = jsonFieldsNameOfLightColor[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *LightColor) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *LightColor) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes string as json.
 func (o OptString) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -233,10 +363,6 @@ func (s *ReportTuple) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *ReportTuple) encodeFields(e *jx.Encoder) {
 	{
-		e.FieldStart("owner")
-		e.Str(s.Owner)
-	}
-	{
 		e.FieldStart("repository")
 		e.Str(s.Repository)
 	}
@@ -249,17 +375,21 @@ func (s *ReportTuple) encodeFields(e *jx.Encoder) {
 		e.Int(s.Age)
 	}
 	{
-		e.FieldStart("reference")
-		e.Str(s.Reference)
+		e.FieldStart("url")
+		e.Str(s.URL)
+	}
+	{
+		e.FieldStart("notes")
+		e.Str(s.Notes)
 	}
 }
 
 var jsonFieldsNameOfReportTuple = [5]string{
-	0: "owner",
-	1: "repository",
-	2: "section",
-	3: "age",
-	4: "reference",
+	0: "repository",
+	1: "section",
+	2: "age",
+	3: "url",
+	4: "notes",
 }
 
 // Decode decodes ReportTuple from json.
@@ -271,20 +401,8 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "owner":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.Owner = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"owner\"")
-			}
 		case "repository":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.Repository = string(v)
@@ -296,7 +414,7 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"repository\"")
 			}
 		case "section":
-			requiredBitSet[0] |= 1 << 2
+			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
 				if err := s.Section.Decode(d); err != nil {
 					return err
@@ -306,7 +424,7 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"section\"")
 			}
 		case "age":
-			requiredBitSet[0] |= 1 << 3
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Int()
 				s.Age = int(v)
@@ -317,17 +435,29 @@ func (s *ReportTuple) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"age\"")
 			}
-		case "reference":
-			requiredBitSet[0] |= 1 << 4
+		case "url":
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
-				s.Reference = string(v)
+				s.URL = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"reference\"")
+				return errors.Wrap(err, "decode field \"url\"")
+			}
+		case "notes":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.Notes = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"notes\"")
 			}
 		default:
 			return d.Skip()
