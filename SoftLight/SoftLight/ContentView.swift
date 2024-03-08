@@ -45,7 +45,9 @@ struct ContentView: View {
               Link(report.notes, destination: URL(string: report.url)!)
             }
           } else if report.section == "pull" {
-            Text("Pull:")
+            let url = URL(string: report.url)!
+
+            Text("Pull branch \(report.notes) for \(report.repository) on \(url.host()!)")
           }
         }
       }
