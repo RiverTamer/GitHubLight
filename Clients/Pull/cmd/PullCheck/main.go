@@ -11,14 +11,12 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"karlkraft.com/githublightpull"
 	"karlkraft.com/githublightpull/api"
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -63,53 +61,126 @@ func processFolder(path string) []api.ReportsItem {
 	log.Printf("Scanning %s", path)
 	hostName, _ := os.Hostname()
 	pullReports := make([]api.ReportsItem, 0)
-	cmd := exec.Command("git", "fetch")
+	err := fetchRemotes(path)
+	if err != nil {
+		log.Printf("!! Could not use git fetch (%v)", err)
+		return pullReports
+	}
+
+	currentBranchName, err := findCurrentBranch(path)
+	if err != nil {
+		log.Printf("!! Could not findCurrentBranch() (%v)", err)
+		return pullReports
+	}
+	currentBranchDirty, err := isCurrentBranchDirty(path)
+	if err != nil {
+		log.Printf("!! Could not isCurrentBranchDirty() (%v)", err)
+		return pullReports
+	}
+
+	cmd := exec.Command("git", "for-each-ref", "--format=%(refname:short) %(push:track)", "refs/heads")
 	cmd.Dir = path
-	output, err := cmd.CombinedOutput()
+	statusData, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("Could not use git fetch %v", err)
-		return nil
+		log.Printf("Could not get branch list on %s (%v)", path, err)
+		return pullReports
 	}
-
-	r, err := git.PlainOpen(path)
-	if err != nil {
-		log.Fatalf("Could not open %s\n", path)
-	}
-
-	branches, err := r.Branches()
-	if err != nil {
-		log.Fatalf("Could not get branch list")
-	}
-	_ = branches.ForEach(func(branch *plumbing.Reference) error {
-		components := strings.Split(branch.Name().String(), "/")
-		branchName := components[len(components)-1]
-		log.Printf("  Branch %s", branchName)
-		revCommand := exec.Command("git", "rev-list", "--left-right", "--count", fmt.Sprintf("%s...origin/%s", branchName, branchName))
-		revCommand.Dir = path
-		output, err = revCommand.CombinedOutput()
-		if err != nil {
-			log.Printf("  ^^ Error (may not exist on remote")
-			return nil
+	for _, s := range strings.Split(string(statusData), "\n") {
+		if len(s) == 0 {
+			continue
 		}
-		mergeCountFields := strings.Fields(string(output))
-		commitsToMerge, _ := strconv.Atoi(mergeCountFields[1])
-		if commitsToMerge > 0 {
-			//log.Printf("Branch %s in path %s needs to be updated\n", branchName, path)
+		// Nothing to pull
+		branchName := strings.Fields(s)[0]
+		if !strings.Contains(s, "[behind ") && !strings.Contains(s, ", behind ") {
+			log.Printf("✅ " + branchName)
+		} else if branchName == currentBranchName && currentBranchDirty {
+			behind, _ := commitsBehind(s)
+			log.Printf("🚨 %s (%d)", branchName, behind)
 			anItem := api.ReportsItem{
 				Type: api.ReportTupleReportsItem,
 				ReportTuple: api.ReportTuple{
 					Repository: path,
 					Section:    api.ReportTupleSectionPull,
-					Age:        commitsToMerge,
+					Age:        behind,
 					URL:        "http://" + hostName + "/",
 					Notes:      branchName,
 				},
 			}
 			pullReports = append(pullReports, anItem)
+		} else if strings.Contains(s, "ahead ") {
+			behind, _ := commitsBehind(s)
+			log.Printf("⬆️ %s (%d)", branchName, behind)
+			anItem := api.ReportsItem{
+				Type: api.ReportTupleReportsItem,
+				ReportTuple: api.ReportTuple{
+					Repository: path,
+					Section:    api.ReportTupleSectionPull,
+					Age:        behind,
+					URL:        "http://" + hostName + "/",
+					Notes:      branchName,
+				},
+			}
+			pullReports = append(pullReports, anItem)
+		} else {
+			behind, _ := commitsBehind(s)
+			log.Printf("⬇️ %s (%d)", branchName, behind)
+			updateBranch(path, branchName)
 		}
-		return nil
-	})
+	}
 	return pullReports
+}
+
+func updateBranch(path string, name string) {
+	cmd := exec.Command("git", "fetch", "-u", "origin", name+":"+name)
+	cmd.Dir = path
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return
+	}
+	print(string(output))
+}
+
+func commitsBehind(s string) (int, error) {
+	const regexMatch = `behind (\d+)` // to match updated_at=123456
+	rx, err := regexp.Compile(regexMatch)
+	if err != nil {
+		return 0, err
+	}
+	res := rx.FindStringSubmatch(s)
+	return strconv.Atoi(res[1])
+}
+
+func fetchRemotes(path string) error {
+	cmd := exec.Command("git", "fetch")
+	cmd.Dir = path
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func isCurrentBranchDirty(path string) (bool, error) {
+	cmd := exec.Command("git", "status", "-s")
+	cmd.Dir = path
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return true, err
+	}
+	s := string(output)
+	return len(s) > 0, nil
+
+}
+
+func findCurrentBranch(path string) (string, error) {
+	cmd := exec.Command("git", "branch", "--show-current")
+	cmd.Dir = path
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+	s := string(output)
+	s = s[:len(s)-1]
+	return s, nil
 }
 
 func readSettings() *GitHubLight.Settings {
