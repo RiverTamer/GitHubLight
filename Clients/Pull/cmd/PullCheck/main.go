@@ -89,25 +89,34 @@ func processFolder(path string) []api.ReportsItem {
 		if len(s) == 0 {
 			continue
 		}
-		// Nothing to pull
 		branchName := strings.Fields(s)[0]
 		if !strings.Contains(s, "[behind ") && !strings.Contains(s, ", behind ") {
+			// Nothing to pull
 			log.Printf("✅ " + branchName)
-		} else if branchName == currentBranchName && currentBranchDirty {
-			behind, _ := commitsBehind(s)
-			log.Printf("🚨 %s (%d)", branchName, behind)
-			anItem := api.ReportsItem{
-				Type: api.ReportTupleReportsItem,
-				ReportTuple: api.ReportTuple{
-					Repository: path,
-					Section:    api.ReportTupleSectionPull,
-					Age:        behind,
-					URL:        "http://" + hostName + "/",
-					Notes:      branchName,
-				},
+		} else if branchName == currentBranchName {
+			if currentBranchDirty {
+				// Current branch needs pull but is dirty
+				behind, _ := commitsBehind(s)
+				log.Printf("🚨 %s (%d)", branchName, behind)
+				anItem := api.ReportsItem{
+					Type: api.ReportTupleReportsItem,
+					ReportTuple: api.ReportTuple{
+						Repository: path,
+						Section:    api.ReportTupleSectionPull,
+						Age:        behind,
+						URL:        "http://" + hostName + "/",
+						Notes:      branchName,
+					},
+				}
+				pullReports = append(pullReports, anItem)
+			} else {
+				// current branch can be pulled directly
+				behind, _ := commitsBehind(s)
+				log.Printf("⤵️ %s (%d)", branchName, behind)
+				pullCurrentBranch(path)
 			}
-			pullReports = append(pullReports, anItem)
 		} else if strings.Contains(s, "ahead ") {
+			// Branch need to be pulled but also needs a push first
 			behind, _ := commitsBehind(s)
 			log.Printf("⬆️ %s (%d)", branchName, behind)
 			anItem := api.ReportsItem{
@@ -122,23 +131,23 @@ func processFolder(path string) []api.ReportsItem {
 			}
 			pullReports = append(pullReports, anItem)
 		} else {
+			// non-current branch, can be pulled with fetch
 			behind, _ := commitsBehind(s)
-			anItem := api.ReportsItem{
-				Type: api.ReportTupleReportsItem,
-				ReportTuple: api.ReportTuple{
-					Repository: path,
-					Section:    api.ReportTupleSectionPull,
-					Age:        behind,
-					URL:        "http://" + hostName + "/",
-					Notes:      "git fetch -u origin +" + branchName + ":" + branchName,
-				},
-			}
-			pullReports = append(pullReports, anItem)
-			//log.Printf("⬇️ %s (%d)", branchName, behind)
-			//updateBranch(path, branchName)
+			log.Printf("⬇️ %s (%d)", branchName, behind)
+			updateBranch(path, branchName)
 		}
 	}
 	return pullReports
+}
+
+func pullCurrentBranch(path string) {
+	cmd := exec.Command("git", "pull")
+	cmd.Dir = path
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return
+	}
+	print(string(output))
 }
 
 func updateBranch(path string, name string) {
