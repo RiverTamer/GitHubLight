@@ -38,8 +38,18 @@ func main() {
 		Clientid: clientid,
 		Reports:  make([]api.ReportsItem, 0),
 	}
+	clientReport.Reports = recursiveProcessFolder(path)
+
+	_, err = client.ReportPost(context.Background(), &clientReport)
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+}
+
+func recursiveProcessFolder(path string) []api.ReportsItem {
+	reports := make([]api.ReportsItem, 0)
 	if _, err := os.Stat(path + "/.git"); !os.IsNotExist(err) {
-		clientReport.Reports = processFolder(path)
+		return processFolder(path)
 	} else {
 		entries, err := os.ReadDir(path)
 		if err != nil {
@@ -47,20 +57,17 @@ func main() {
 		}
 		for _, file := range entries {
 			if (file.Type() & os.ModeDir) > 0 {
-				clientReport.Reports = append(clientReport.Reports, processFolder(path+"/"+file.Name())...)
+				reports = append(reports, recursiveProcessFolder(path+"/"+file.Name())...)
 			}
 		}
-	}
-	_, err = client.ReportPost(context.Background(), &clientReport)
-	if err != nil {
-		log.Fatalf("%v\n", err)
+		return reports
 	}
 }
 
 func processFolder(path string) []api.ReportsItem {
 	log.Printf("Scanning %s", path)
-	hostName, _ := os.Hostname()
 	pullReports := make([]api.ReportsItem, 0)
+	hostName, _ := os.Hostname()
 	err := fetchRemotes(path)
 	if err != nil {
 		log.Printf("!! Could not use git fetch (%v)", err)
