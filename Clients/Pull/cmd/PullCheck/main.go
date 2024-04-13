@@ -123,8 +123,19 @@ func processFolder(path string) []api.ReportsItem {
 			pullReports = append(pullReports, anItem)
 		} else {
 			behind, _ := commitsBehind(s)
-			log.Printf("⬇️ %s (%d)", branchName, behind)
-			updateBranch(path, branchName)
+			anItem := api.ReportsItem{
+				Type: api.ReportTupleReportsItem,
+				ReportTuple: api.ReportTuple{
+					Repository: path,
+					Section:    api.ReportTupleSectionPull,
+					Age:        behind,
+					URL:        "http://" + hostName + "/",
+					Notes:      "git fetch -u origin +" + branchName + ":" + branchName,
+				},
+			}
+			pullReports = append(pullReports, anItem)
+			//log.Printf("⬇️ %s (%d)", branchName, behind)
+			//updateBranch(path, branchName)
 		}
 	}
 	return pullReports
