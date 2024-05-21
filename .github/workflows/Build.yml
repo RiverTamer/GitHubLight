@@ -1,0 +1,111 @@
+---
+name: "Build Server and Clients"
+
+
+on:                          # yamllint disable-line rule:truthy
+  schedule:
+    - cron: '41 08 * * 6'
+  workflow_dispatch:
+  push:
+
+jobs:
+
+  "LightServer":
+    env:
+      TARGET: GitHubLightServer
+      CHANNEL_BASE: GitHubLightServer
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: macOS Build
+        working-directory: ./LightServer
+        run: |
+          go generate ./...
+          $HOME/github/bin/build_go_macos.sh
+
+  "SoftLight":
+    env:
+      TARGET: SoftLight
+      CHANNEL_BASE: SoftLight
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        working-directory: ./SoftLight
+        run: $HOME/github/bin/build_mac_app.sh
+
+  "PullClient":
+    env:
+      TARGET: GitHubLightPullClient
+      CHANNEL_BASE: GitHubLightPullClient
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: macOS Build
+        working-directory: ./Clients/Pull
+        run: |
+          go generate ./...
+          $HOME/github/bin/build_go_macos.sh
+
+  "CLClient":
+    env:
+      TARGET: GitHubLightCLClient
+      CHANNEL_BASE: GitHubLightCLClient
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: macOS Build
+        working-directory: ./Clients/GHCLI
+        run: |
+          go generate ./...
+          $HOME/github/bin/build_go_macos.sh
+
+
+  "APIClient":
+    env:
+      TARGET: GitHubLightAPIClient
+      CHANNEL_BASE: GitHubLightAPIClient
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: macOS Build
+        working-directory: ./Clients/API
+        run: |
+          go generate ./...
+          $HOME/github/bin/build_go_macos.sh
