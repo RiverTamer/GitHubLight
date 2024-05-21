@@ -1,12 +1,17 @@
 ---
 name: "Build Server and Clients"
 
-
 on:                          # yamllint disable-line rule:truthy
   schedule:
     - cron: '41 08 * * 6'
+
   workflow_dispatch:
+
   push:
+    branches:
+      - '!update/pre-commit-hooks'
+      - '!dependabot/*'
+      - '**'
 
 jobs:
 
