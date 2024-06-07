@@ -1,0 +1,39 @@
+---
+name: "Build CLClient"
+
+on:                          # yamllint disable-line rule:truthy
+  schedule:
+    - cron: '41 08 * * 6'
+
+  workflow_dispatch:
+
+  push:
+    branches-ignore:
+      - 'update/**'
+      - 'dependabot/**'
+
+env:
+  TARGET: GitHubLightCLClient
+  CHANNEL_BASE: GitHubLightCLClient
+
+jobs:
+
+  "macOS":
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: macOS Build
+        working-directory: ./Clients/GHCLI
+        run: |
+          go generate ./...
+          $HOME/github/bin/build_go_macos.sh
+
+      - name: Mark Completed
+        run: touch  ${{ runner.temp }}/Green

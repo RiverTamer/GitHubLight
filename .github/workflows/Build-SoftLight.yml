@@ -1,0 +1,37 @@
+---
+name: "Build SoftLight"
+
+on:                          # yamllint disable-line rule:truthy
+  schedule:
+    - cron: '41 08 * * 6'
+
+  workflow_dispatch:
+
+  push:
+    branches-ignore:
+      - 'update/**'
+      - 'dependabot/**'
+
+env:
+  TARGET: SoftLight
+  CHANNEL_BASE: SoftLight
+
+jobs:
+  "SoftLight":
+
+    runs-on:
+      - self-hosted
+      - macOS
+
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        working-directory: ./SoftLight
+        run: $HOME/github/bin/build_mac_app.sh
+
+      - name: Mark Completed
+        run: touch  ${{ runner.temp }}/Green
