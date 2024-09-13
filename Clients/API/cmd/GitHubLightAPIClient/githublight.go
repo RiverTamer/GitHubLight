@@ -10,6 +10,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/go-github/v57/github"
 	"karlkraft.com/GitHubLight"
 	"karlkraft.com/GitHubLight/api"
@@ -21,7 +22,12 @@ import (
 )
 
 func main() {
-	settings := readSettings()
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: githublight /path/to/config.toml")
+		os.Exit(-2)
+	}
+	settings := GitHubLight.ReadSettings(os.Args[1])
+
 	client, err := api.NewClient(settings.LightServer)
 	if err != nil {
 		log.Fatalf("Unable to create LightServer client %v", err)
@@ -55,7 +61,10 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 	issues, _, err := gh.Search.Issues(context.Background(), "is:open is:pr review-requested:"+settings.Username, &options)
 	if err != nil {
 		log.Fatalf("Could not fetch issues (%v)", err)
+	} else {
+		fmt.Println("Review requested: ", len(issues.Issues))
 	}
+
 	reportIssues := make([]api.ReportsItem, 0)
 	for _, issue := range issues.Issues {
 		reportIssues = append(reportIssues,
@@ -74,6 +83,8 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 	issues, _, err = gh.Search.Issues(context.Background(), "is:open is:pr review:approved author:"+settings.Username, &options)
 	if err != nil {
 		log.Fatalf("Could not fetch issues (%v)", err)
+	} else {
+		fmt.Println("Merge needed: ", len(issues.Issues))
 	}
 
 	for _, issue := range issues.Issues {
@@ -116,12 +127,4 @@ func owner(repoURL *string) string {
 	}
 	pathComponents := strings.Split(u.Path, "/")
 	return pathComponents[len(pathComponents)-2]
-}
-
-func readSettings() *GitHubLight.Settings {
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatalf("Unable to find users home directory %v", err)
-	}
-	return GitHubLight.ReadSettings(dirname + "/.githubLightBox")
 }
