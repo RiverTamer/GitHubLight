@@ -328,7 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.karlkraft.SoftLight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -355,7 +355,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.karlkraft.SoftLight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
@@ -388,7 +388,7 @@
 			repositoryURL = "https://github.com/apple/swift-openapi-generator.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.2.1;
+				version = 1.3.1;
 			};
 		};
 		CBBC46AF2B9428B800AB35E2 /* XCRemoteSwiftPackageReference "swift-openapi-runtime" */ = {
@@ -396,7 +396,7 @@
 			repositoryURL = "https://github.com/apple/swift-openapi-runtime.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.3.2;
+				version = 1.5.0;
 			};
 		};
 		CBBC46B02B9428C200AB35E2 /* XCRemoteSwiftPackageReference "swift-openapi-urlsession" */ = {
@@ -404,7 +404,7 @@
 			repositoryURL = "https://github.com/apple/swift-openapi-urlsession.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.1;
+				version = 1.0.2;
 			};
 		};
 		CBBC46B12B9428CD00AB35E2 /* XCRemoteSwiftPackageReference "swift-toml" */ = {
