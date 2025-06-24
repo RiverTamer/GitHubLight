@@ -3,7 +3,7 @@
 //  PullCheck
 //
 //  Created by Karl Kraft on 1/12/2024
-//  Copyright 2024 Karl Kraft. All rights reserved
+//  Copyright 2024-2025 Karl Kraft. All rights reserved
 //
 
 package main
@@ -24,6 +24,7 @@ import (
 func main() {
 	var path string
 	var clientid string
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	flag.StringVar(&path, "p", "path", "repository or path to report")
 	flag.StringVar(&clientid, "c", "clientid", "client id to report")
