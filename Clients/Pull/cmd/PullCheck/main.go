@@ -24,10 +24,12 @@ import (
 func main() {
 	var path string
 	var clientid string
+	var verbose bool
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	flag.StringVar(&path, "p", "path", "repository or path to report")
 	flag.StringVar(&clientid, "c", "clientid", "client id to report")
+	flag.BoolVar(&verbose, "v", false, "Report every step")
 	flag.Parse()
 
 	settings := readSettings()
@@ -39,7 +41,11 @@ func main() {
 		Clientid: clientid,
 		Reports:  make([]api.ReportsItem, 0),
 	}
-	clientReport.Reports = recursiveProcessFolder(path)
+	var dumpKey bool
+	clientReport.Reports, dumpKey = recursiveProcessFolder(path, verbose)
+	if dumpKey {
+		displayKey()
+	}
 
 	_, err = client.ReportPost(context.Background(), &clientReport)
 	if err != nil {
@@ -47,10 +53,11 @@ func main() {
 	}
 }
 
-func recursiveProcessFolder(path string) []api.ReportsItem {
+func recursiveProcessFolder(path string, verbose bool) ([]api.ReportsItem, bool) {
+	dumpKey := false
 	reports := make([]api.ReportsItem, 0)
 	if _, err := os.Stat(path + "/.git"); !os.IsNotExist(err) {
-		return processFolder(path)
+		return processFolder(path, verbose)
 	} else {
 		entries, err := os.ReadDir(path)
 		if err != nil {
@@ -58,32 +65,37 @@ func recursiveProcessFolder(path string) []api.ReportsItem {
 		}
 		for _, file := range entries {
 			if (file.Type() & os.ModeDir) > 0 {
-				reports = append(reports, recursiveProcessFolder(path+"/"+file.Name())...)
+				var newReports []api.ReportsItem
+				var b bool
+				newReports, b = recursiveProcessFolder(path+"/"+file.Name(), verbose)
+				dumpKey = dumpKey || b
+				reports = append(reports, newReports...)
 			}
 		}
-		return reports
+		return reports, dumpKey
 	}
 }
 
-func processFolder(path string) []api.ReportsItem {
-	log.Printf("Scanning %s", path)
+//goland:noinspection ALL
+func processFolder(path string, verbose bool) ([]api.ReportsItem, bool) {
+	reportPath := path
 	pullReports := make([]api.ReportsItem, 0)
 	hostName, _ := os.Hostname()
 	err := fetchRemotes(path)
 	if err != nil {
 		log.Printf("!! Could not use git fetch (%v)", err)
-		return pullReports
+		return pullReports, true
 	}
 
 	currentBranchName, err := findCurrentBranch(path)
 	if err != nil {
 		log.Printf("!! Could not findCurrentBranch() (%v)", err)
-		return pullReports
+		return pullReports, true
 	}
 	currentBranchDirty, err := isCurrentBranchDirty(path)
 	if err != nil {
 		log.Printf("!! Could not isCurrentBranchDirty() (%v)", err)
-		return pullReports
+		return pullReports, true
 	}
 
 	cmd := exec.Command("git", "for-each-ref", "--format=%(refname:short) %(push:track)", "refs/heads")
@@ -91,7 +103,7 @@ func processFolder(path string) []api.ReportsItem {
 	statusData, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Could not get branch list on %s (%v)", path, err)
-		return pullReports
+		return pullReports, true
 	}
 	for _, s := range strings.Split(string(statusData), "\n") {
 		if len(s) == 0 {
@@ -100,9 +112,19 @@ func processFolder(path string) []api.ReportsItem {
 		branchName := strings.Fields(s)[0]
 		if !strings.Contains(s, "[behind ") && !strings.Contains(s, ", behind ") {
 			// Nothing to pull
-			log.Printf("✅ " + branchName)
+			if verbose {
+				if len(reportPath) > 0 {
+					log.Printf("Scanning %s", path)
+					reportPath = ""
+				}
+				log.Printf("✅ " + branchName)
+			}
 		} else if branchName == currentBranchName {
 			if currentBranchDirty {
+				if len(reportPath) > 0 {
+					log.Printf("Scanning %s", path)
+					reportPath = ""
+				}
 				// Current branch needs pull but is dirty
 				behind, _ := commitsBehind(s)
 				log.Printf("🚨 %s (%d)", branchName, behind)
@@ -118,12 +140,20 @@ func processFolder(path string) []api.ReportsItem {
 				}
 				pullReports = append(pullReports, anItem)
 			} else {
-				// current branch can be pulled directly
+				if len(reportPath) > 0 {
+					log.Printf("Scanning %s", path)
+					reportPath = ""
+				}
+				// the current branch can be pulled directly
 				behind, _ := commitsBehind(s)
 				log.Printf("⤵️ %s (%d)", branchName, behind)
 				pullCurrentBranch(path)
 			}
 		} else if strings.Contains(s, "ahead ") {
+			if len(reportPath) > 0 {
+				log.Printf("Scanning %s", path)
+				reportPath = ""
+			}
 			// Branch need to be pulled but also needs a push first
 			behind, _ := commitsBehind(s)
 			log.Printf("⬆️ %s (%d)", branchName, behind)
@@ -139,15 +169,27 @@ func processFolder(path string) []api.ReportsItem {
 			}
 			pullReports = append(pullReports, anItem)
 		} else {
+			if len(reportPath) > 0 {
+				log.Printf("Scanning %s", path)
+				reportPath = ""
+			}
 			// non-current branch, can be pulled with fetch
 			behind, _ := commitsBehind(s)
 			log.Printf("⬇️ %s (%d)", branchName, behind)
 			updateBranch(path, branchName)
 		}
 	}
-	return pullReports
+	return pullReports, len(reportPath) == 0
 }
 
+func displayKey() {
+	log.Printf("✅ branch is synced")
+	log.Printf("⬆️ branch needs to be pushed")
+	log.Printf("⬇️ branch is behind and was pulled")
+	log.Printf("⬇️ branch is behind and was fetched")
+	log.Printf("🚨 branch cannot be synced (uncommitted changes)")
+
+}
 func pullCurrentBranch(path string) {
 	cmd := exec.Command("git", "pull")
 	cmd.Dir = path
