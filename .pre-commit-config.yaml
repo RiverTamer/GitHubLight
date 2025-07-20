@@ -39,7 +39,7 @@ repos:
     - id: go-fmt
 
  - repo: https://github.com/nicklockwood/SwiftFormat
-   rev: 0.56.4
+   rev: 0.57.2
    hooks:
     - id: swiftformat
 
