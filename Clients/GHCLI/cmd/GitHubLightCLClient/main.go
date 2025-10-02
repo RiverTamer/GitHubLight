@@ -3,22 +3,23 @@
 //  GitHubLight
 //
 //  Created by Karl Kraft on 1/12/2024
-//  Copyright 2024 Karl Kraft. All rights reserved
+//  Copyright 2024-2025 Karl Kraft. All rights reserved
 //
 
 package main
 
 import (
 	"context"
-	"github.com/ogen-go/ogen/json"
-	GitHubLight "karlkraft.com/ghcli"
-	"karlkraft.com/ghcli/api"
 	"log"
 	"os"
 	"os/exec"
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/ogen-go/ogen/json"
+	GitHubLight "karlkraft.com/ghcli"
+	"karlkraft.com/ghcli/api"
 )
 
 type PullRequestList []PullRequest
@@ -43,7 +44,7 @@ type Review struct {
 }
 
 type ReviewRequests struct {
-	Name string `json:"name"`
+	Name string `json:"login"`
 }
 
 type AuthorInfo struct {
@@ -126,9 +127,11 @@ func githubScan(settings *GitHubLight.Settings) api.ClientReport {
 				for _, request := range pr.Requests {
 					if request.Name == settings.CommandLineClient.Username {
 						commentDesired = true
+						break
 					}
 					if slices.Contains(settings.CommandLineClient.Teams, request.Name) {
 						commentDesired = true
+						break
 					}
 				}
 
