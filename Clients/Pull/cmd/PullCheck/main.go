@@ -11,14 +11,16 @@ package main
 import (
 	"context"
 	"flag"
-	"karlkraft.com/githublightpull"
-	"karlkraft.com/githublightpull/api"
 	"log"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/go-faster/errors"
+	"karlkraft.com/githublightpull"
+	"karlkraft.com/githublightpull/api"
 )
 
 func main() {
@@ -261,6 +263,9 @@ func findCurrentBranch(path string) (string, error) {
 		return "", err
 	}
 	s := string(output)
+	if len(s) == 0 {
+		return "", errors.New("No current branch found")
+	}
 	s = s[:len(s)-1]
 	return s, nil
 }
