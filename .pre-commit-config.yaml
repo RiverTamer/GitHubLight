@@ -28,7 +28,7 @@ repos:
       types_or: [objective-c, objective-c++, swift, swiftdeps, java, c++]
 
  - repo: https://github.com/KarlKraft/header_check
-   rev: v2.0.2
+   rev: v2.0.6
    hooks:
     - id: header_check
       args: [--autodate, --license, arr]
@@ -39,7 +39,7 @@ repos:
     - id: go-fmt
 
  - repo: https://github.com/nicklockwood/SwiftFormat
-   rev: 0.60.1
+   rev: 0.61.0
    hooks:
     - id: swiftformat
 
