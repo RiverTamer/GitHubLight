@@ -37,7 +37,7 @@ jobs:
         working-directory: ./Clients/Pull
         run: |
           go generate ./...
-          $HOME/github/bin/build_go_macos.sh
+          $HOME/github/bin/build_go.sh
 
       - name: Mark Completed
         run: touch  ${{ runner.temp }}/Green
@@ -65,7 +65,7 @@ jobs:
         working-directory: ./Clients/Pull
         run: |
           go generate ./...
-          $HOME/github/bin/build_go_linux.sh
+          $HOME/github/bin/build_go.sh
 
       - name: Mark Completed
         run: touch  ${{ runner.temp }}/Green
