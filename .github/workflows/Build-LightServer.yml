@@ -3,7 +3,7 @@ name: "Build LightServer"
 
 on:                          # yamllint disable-line rule:truthy
   schedule:
-    - cron: '41 08 * * 6'
+    - cron: '18 12 * * 6'
 
   workflow_dispatch:
 

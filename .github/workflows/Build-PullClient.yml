@@ -3,7 +3,7 @@ name: "Build PullClient"
 
 on:                          # yamllint disable-line rule:truthy
   schedule:
-    - cron: '41 08 * * 6'
+    - cron: '50 12 * * 6'
 
   workflow_dispatch:
 

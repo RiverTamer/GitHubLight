@@ -3,7 +3,7 @@ name: "Build SoftLight"
 
 on:                          # yamllint disable-line rule:truthy
   schedule:
-    - cron: '41 08 * * 6'
+    - cron: '2 11 * * 6'
 
   workflow_dispatch:
 

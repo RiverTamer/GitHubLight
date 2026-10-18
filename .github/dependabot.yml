@@ -7,11 +7,11 @@ updates:
     schedule:
       interval: "weekly"
       day: "saturday"
-      time: "09:00"
+      time: "15:09"
 
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "saturday"
-      time: "09:00"
+      time: "13:58"
